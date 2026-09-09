@@ -45,6 +45,34 @@ of story did it tell getting there?**
     A soft performance warning should trigger above some unit-count
     threshold rather than a hard cap.
 
+### Complexity level — unified definition
+
+To keep this tractable to build, complexity level is defined as exactly
+**two levers**, applied consistently across every system in the sim
+(environment, units, factions, tech/culture, disasters, etc.) — it never
+changes which formulas run or branches the underlying algorithms:
+
+1. **User control over starting values** — how much of the initial
+   configuration is hardcoded/preset vs. exposed for the user to adjust,
+   and how wide a range they're allowed to adjust within. This covers
+   environment/society variable presets and the unique unit count range
+   described above.
+2. **Cycle-to-cycle persistence of detailed values** — every formula
+   always operates on the *full* detailed breakdown of its inputs (see
+   "Complexity-gated stat granularity" under Technology & Culture
+   Evolution, which is a general pattern, not tech-specific). Complexity
+   only controls which of those detailed values are allowed to keep
+   their own independently-drifted value from cycle to cycle, versus
+   being reset/locked to a neutral baseline (the recalculated aggregate
+   average) at the end of each cycle.
+
+Any apparent "the algorithm gets more detailed at higher complexity"
+behavior (e.g. terrain and third-party intervention mattering more in
+faction conflicts at high complexity — see Faction Interactions) should
+be implemented as lever 2: those inputs always exist and always feed the
+resolution formula, but are pinned to a neutral/no-op baseline value at
+low complexity rather than being absent from the calculation.
+
 ## Population Model: Unique Units
 
 Rather than simulating every individual at every scale, the population is
@@ -341,3 +369,6 @@ rather than higher levels being pure reporting rollups of lower ones.
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
+- Confirm terrain and third-party-intervention factors in faction
+  conflict resolution fit the "always-on formula, neutral baseline at low
+  complexity" model rather than being genuine algorithmic additions.
