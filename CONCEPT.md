@@ -47,10 +47,9 @@ of story did it tell getting there?**
 
 ### Complexity level — unified definition
 
-To keep this tractable to build, complexity level is defined as exactly
-**two levers**, applied consistently across every system in the sim
-(environment, units, factions, tech/culture, disasters, etc.) — it never
-changes which formulas run or branches the underlying algorithms:
+To keep this tractable to build, complexity level is defined as three
+consistent mechanisms, applied the same way across every system in the
+sim (environment, units, factions, tech/culture, disasters, etc.):
 
 1. **User control over starting values** — how much of the initial
    configuration is hardcoded/preset vs. exposed for the user to adjust,
@@ -65,13 +64,22 @@ changes which formulas run or branches the underlying algorithms:
    their own independently-drifted value from cycle to cycle, versus
    being reset/locked to a neutral baseline (the recalculated aggregate
    average) at the end of each cycle.
-
-Any apparent "the algorithm gets more detailed at higher complexity"
-behavior (e.g. terrain and third-party intervention mattering more in
-faction conflicts at high complexity — see Faction Interactions) should
-be implemented as lever 2: those inputs always exist and always feed the
-resolution formula, but are pinned to a neutral/no-op baseline value at
-low complexity rather than being absent from the calculation.
+3. **Complexity-gated input subroutines** — complexity can enable an
+   optional preprocessing subroutine that transforms a baseline value
+   into a scoped **effective value** used for just one step of the main
+   formula, without ever overwriting the baseline itself.
+   Example: resolving a faction battle, low complexity feeds each side's
+   raw baseline troop count straight into the combat formula. Higher
+   complexity instead runs troop count through a terrain/proximity
+   subroutine first — e.g. 100 soldiers, given the terrain, produces an
+   effective strength of 50 — and *that* effective number is what feeds
+   the combat-strength part of the formula. Critically, casualty
+   percentages (and any other part of the resolution that depends on
+   real population) are still computed against the **original baseline**
+   troop count, never the subroutine's effective number — the subroutine
+   output is scoped to the one calculation step it was produced for. This
+   mirrors how per-calculation unit variance noise (see Population
+   Model) never feeds back into a unit's persistent base stat.
 
 ## Population Model: Unique Units
 
@@ -369,6 +377,6 @@ rather than higher levels being pure reporting rollups of lower ones.
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
-- Confirm terrain and third-party-intervention factors in faction
-  conflict resolution fit the "always-on formula, neutral baseline at low
-  complexity" model rather than being genuine algorithmic additions.
+- Which specific formula steps across the sim (beyond combat
+  terrain/proximity) warrant a complexity-gated effective-value
+  subroutine vs. just using the raw baseline value directly.
