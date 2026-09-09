@@ -219,6 +219,96 @@ response, trade-seeking, war, and diplomacy — direction and magnitude of
 tech/culture change simply becomes one more output of the loop applied to
 a different domain.
 
+### Complexity-gated stat granularity (general pattern, not just tech)
+
+Rather than having low complexity literally lack detailed sub-stats, the
+**full detailed breakdown always exists in the data model** — complexity
+only governs whether those sub-stats are allowed to diverge independently
+from the tracked aggregate score, or get collapsed back into it each
+cycle. This pattern is likely reusable anywhere the sim has an aggregate
+score backed by finer detail (culture score, and potentially other
+composite stats), not just technology:
+
+- **Lowest complexity**: the aggregate (e.g. Technology = 50) is applied
+  uniformly to every detailed sub-stat at the start of a cycle.
+  Simulation formulas act on those (initially identical) detailed values
+  during the cycle, causing them to diverge. At cycle end, the aggregate
+  is recalculated as the average of the detailed values, and then *every*
+  detailed value is reset back to that new aggregate for the next cycle —
+  so no sub-stat differentiation ever persists between cycles.
+- **Medium complexity**: a subset of detailed stats (however many the
+  complexity tier unlocks) are allowed to persist their own independent
+  value across cycles instead of resetting. Stats that remain locked
+  still reset to the newly recalculated aggregate each cycle.
+- **Highest complexity**: the aggregate is still calculated as the
+  average of the detailed values, but purely for tracking/graphing/UI
+  purposes — it has zero effect on any individual detailed value. Every
+  detailed stat is fully independently tracked.
+
+### Regression
+
+At the end of each cycle, every stat undergoes an independent regression
+check:
+
+- A **regression risk** (probability that stat regresses at all this
+  cycle) is computed from factors including: time elapsed since that
+  stat's last regression event (models the "aging out" of skilled
+  individuals — risk accumulates the longer it's been), the education
+  level of the owning faction/society (better knowledge retention and
+  replacement lowers risk), and a general **chaos constant** representing
+  baseline entropy/randomness.
+- Example mechanic: if the computed risk is 5%, the stat regresses this
+  cycle if a 1–100 roll lands in the top 5% of the range (96–100).
+- The same factors also govern regression **magnitude**, not just
+  likelihood — e.g. higher education narrows the possible severity range
+  when a regression does occur.
+- A stat's own current strength is self-reinforcing: high skill in an
+  area *reduces* both the chance and severity of regression in that same
+  area, while an already-weak stat is *more* prone to further regression
+  — a compounding "rich get richer, poor get poorer" dynamic.
+
+## Hierarchical Stat Aggregation & Cross-Level Influence
+
+Stats exist at three nested levels — **unit → faction → society** — and
+values flow both up (aggregation) and down (influence on outcomes),
+rather than higher levels being pure reporting rollups of lower ones.
+
+### Upward aggregation is weighted, not just population-based
+
+- A faction's stat is a **weighted** aggregate of its units' values; a
+  society's stat is a weighted aggregate of its factions' (and
+  transitively units') values.
+- The weight isn't purely proportional to population size — influence and
+  relationship strength matter too. Example: a mid-sized faction with a
+  high religion score and strong diplomatic influence over other factions
+  can outweigh a larger faction with a lower religion score and weak
+  influence, when computing the society-wide religion number. The same
+  weighting concept applies one level down: a unit's influence on its
+  faction's score isn't purely proportional to that unit's population
+  either.
+
+### Downward influence on outcomes is gated by relationship, but can be overridden by need
+
+- When resolving an effect on a specific unit or faction, the relevant
+  higher-level number(s) can pull that outcome up or down — a faction
+  with weak individual farming/intelligence stats can have its
+  farming-related outcomes boosted by drawing on a strong society-wide
+  farming stat.
+- How much a higher level's strength can influence a lower-level outcome
+  is gated by the **relationship level** between them: a strong
+  relationship (faction-to-society or faction-to-faction) makes the
+  higher-level entity more likely to render aid/support, pulling the
+  outcome toward the stronger number; a weak relationship makes aid less
+  likely, leaving the outcome closer to the lower entity's own local
+  numbers.
+- This relationship gate can be **overridden by need**, even under poor
+  relationships: if a higher-level actor's own Need→Strategy→Resolution
+  evaluation determines that a lower entity holds a scarce or critical
+  capability, it may still render aid despite weak relations, because
+  losing that capability would hurt the larger group. Rendering aid is
+  itself just another instance of the same universal decision loop, run
+  by the aid-giving entity.
+
 ## Visualization / UI (concept-level, not final)
 
 - **Primary view**: a randomized map generated from all the environment,
@@ -234,10 +324,13 @@ a different domain.
 
 ## Open Questions / Not Yet Decided
 
-- Tech/culture evolution mechanics (how tech rises or regresses, and how
-  the sim/user judges whether regression was "bad").
+- Concrete taxonomy of detailed technology/culture sub-stats (what the
+  fine-grained breakdown actually consists of, e.g. agriculture,
+  medicine, military, governance, philosophy/religion, art/craft).
+- How the sim/user judges whether a given tech/culture regression was
+  actually "bad" for the society vs. a reasonable adaptation.
 - Disaster/event system (droughts, plagues, invasions — generation rules
-  and interaction with unit variance).
+  and interaction with unit variance and the regression mechanic).
 - Concrete list of faction/unit personality traits and their exact
   interactions with strategy selection.
 - Alliance formation criteria in more detail.
@@ -245,3 +338,6 @@ a different domain.
 - Exact discrete variance-band thresholds (what unit population ranges
   map to "person/family/community" tiers).
 - Exact complexity-level tiering (number of levels, what each unlocks).
+- Exact formula for combining population size and relationship/influence
+  strength into a faction's weight on society-level stats (and a unit's
+  weight on faction-level stats).
