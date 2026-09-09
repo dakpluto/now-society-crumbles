@@ -206,6 +206,19 @@ Multiple outcomes coexist rather than a single resolution type:
   event) involving recurring tribute/resource drain, with a possibility
   of rebellion later if the power gap narrows.
 
+## Technology & Culture Evolution
+
+Growth (or regression) in technology and culture uses the same
+Need→Strategy→Resolution loop as everything else — it is not a separate
+system. Hard numbers and needs establish pressure to develop in a given
+area; personality traits (intelligence, ideology, risk tolerance, etc.)
+determine *which* areas a faction actually invests in and how
+effectively; resolution (with unit variance) determines how much growth
+actually occurs in a cycle. This is the same mechanism that drives farming
+response, trade-seeking, war, and diplomacy — direction and magnitude of
+tech/culture change simply becomes one more output of the loop applied to
+a different domain.
+
 ## Visualization / UI (concept-level, not final)
 
 - **Primary view**: a randomized map generated from all the environment,
