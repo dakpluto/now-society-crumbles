@@ -590,13 +590,27 @@ regions:
 - **NOAA Storm Events Database** as a supplement for severe-weather
   granularity (tornado, blizzard) using a well-documented reference
   region.
-- Each terrain archetype maps to one or two real-world reference regions
-  (e.g. Desert → Sahara + Sonoran; Tropical → Amazon basin + Southeast
-  Asia); each region's per-disaster-type event count is normalized to
+- Each terrain archetype maps to one or two real-world reference regions;
+  each region's per-disaster-type event count is normalized to
   events/decade, then converted to the sim's relative weight scale.
-- Terrain archetype list (draft, TBD to finalize): Desert, Tundra,
-  Tropical/Rainforest, Temperate forest/plains, Coastal,
-  Mountain/highland, Grassland/savanna, Island.
+
+**Terrain archetype list (finalized):**
+
+| Terrain archetype | Reference region(s) |
+|---|---|
+| Desert | Sahara, Sonoran |
+| Tundra | Siberian tundra, Arctic Canada |
+| Tropical/Rainforest | Amazon basin, Congo basin |
+| Temperate forest/plains | Central Europe, Eastern US |
+| Coastal | US Gulf Coast, Southeast Asia coastline |
+| Mountain/highland | Himalayas, Andes |
+| Grassland/savanna | African savanna (Serengeti), US Great Plains |
+| Island | Philippines, Caribbean (captures volcanic, hurricane, and earthquake exposure together) |
+| Wetland/Swamp | Mississippi Delta, Sundarbans |
+
+Wetland/Swamp was added specifically to give flood, sinkhole, and
+epidemic disaster weights a terrain where they're the dominant risk,
+rather than being spread thin across Coastal and Tropical/Rainforest.
 
 ### Epidemic mechanics
 
@@ -700,10 +714,9 @@ likelihood).
   trigger/resolution formulas.
 - Whether natural disasters feed back into human-caused event weights
   (bidirectional influence) or only human→natural as currently defined.
-- Finalize the terrain archetype list and each archetype's real-world
-  reference region(s) (draft list recorded under "Weight-sourcing
-  methodology"); then actually pull and normalize the EM-DAT/USGS/NOAA
-  data into concrete baseline weights.
+- Pull and normalize the actual EM-DAT/USGS/NOAA data for the finalized
+  terrain archetype list into concrete baseline weights (list and
+  reference regions are locked — see "Weight-sourcing methodology").
 - Exact severity-scale tier boundaries/thresholds for disaster types
   using in-sim scales (flood, wildfire, landslide, sinkhole, epidemic,
   etc. — see "Severity scales").
