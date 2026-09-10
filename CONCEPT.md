@@ -618,6 +618,27 @@ rather than one setting among many.
   back into range silently, warn and ask before applying, preserve
   hidden values in case the user raises complexity back up) is TBD.
 
+### End-of-run summary screen
+
+When a run ends (Win/Loss Conditions — population loss, or the
+simulation timer expiring), playback stops and a **dedicated summary
+screen replaces the map view** until dismissed:
+
+- **Outcome**: survived vs. died, framed per Win/Loss Conditions as not
+  strictly binary — the summary should communicate *how* the society
+  changed, not just whether it lived.
+- **Timeline/story recap** of major events across the run (disasters,
+  faction splits, wars, technological/cultural shifts).
+- **Key stat graphs** over the full run (population, happiness,
+  technology, etc.), reusing the same JavaFX `Chart` classes as the
+  Tab-key detail view.
+- **Faction outcomes**: what the society fragmented into (if it did),
+  and each faction's own fate.
+- From here the user can presumably return to setup (e.g. to tweak and
+  re-run) or drill into the full detail/spreadsheet view for anything
+  the summary doesn't cover — exact navigation/actions available from
+  this screen are TBD.
+
 ## Disasters & Events
 
 ### Natural disasters
