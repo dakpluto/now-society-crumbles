@@ -592,6 +592,13 @@ spreadsheet-style breakdown of simulation history — fine-grained data
 and graphs, likely at a per-faction, per-year granularity, given the
 faction/unit-based data model.
 
+**Navigation**: a persistent collapsible tree sidebar (Society →
+Factions → Units) alongside a detail pane — selecting any node in the
+tree updates the detail pane's tables/charts to that level, letting the
+user jump directly to any faction or unit without drilling through
+parents first. JavaFX `TreeView` is the natural fit alongside the
+already-decided `TableView`/`Chart` classes for this view.
+
 ## Disasters & Events
 
 ### Natural disasters
