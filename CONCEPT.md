@@ -21,31 +21,48 @@ of story did it tell getting there?**
 ## Technical Approach
 
 Decided ahead of any scaffolding, so later design decisions can assume
-this shape:
+this shape. (Originally scoped around C#/.NET/Avalonia; revised after
+weighing options against the user's existing Java familiarity and
+interest in Kotlin — see the JVM stack below.)
 
 - **Native desktop app**, not a web app or general game engine. The
   simulation itself is cycle/turn-based (advancing by years, not
   real-time physics/frame updates), so a full game engine (Unity,
-  Godot, Unreal) would be more overhead than the visual ambition needs.
-- **C# / .NET** (latest stable/LTS release).
-- **Avalonia UI** as the application shell (a modern, cross-platform-
-  capable XAML UI framework, spiritual successor to WPF), using the
-  MVVM pattern via CommunityToolkit.Mvvm.
-- **Map view**: a custom-drawn 2D canvas using **SkiaSharp**, redrawn
-  per simulated cycle rather than continuously animated — a data-driven,
-  procedurally generated map rather than a game-engine scene.
-- **Detail/spreadsheet view** (the Tab-key drill-down): Avalonia's
-  DataGrid control for tabular history, paired with an open-source
-  charting library (LiveCharts2 or OxyPlot — both support Avalonia) for
-  graphs.
-- **Simulation engine lives in its own class library, fully decoupled
-  from the UI project.** Most of what's been designed so far (Need→
-  Strategy→Resolution, unit variance, hierarchical stat aggregation,
-  disasters/events) is pure formulas and state with no inherent UI
-  dependency. Keeping the boundary clean makes the engine independently
-  unit-testable and leaves room for a future headless/CLI mode (batch-
-  running or tuning simulations without launching the UI) — not
-  something to build now, just a reason to separate it from day one.
+  Godot, Unreal, libGDX) would be more overhead than the visual ambition
+  needs.
+- **Kotlin on the JVM** — chosen over C#/.NET given the user's stronger
+  existing familiarity with Java and interest in Kotlin specifically;
+  Kotlin is fully interoperable with the wider Java ecosystem while
+  offering more modern language ergonomics than plain Java.
+- **JavaFX** as the UI framework — chosen over Kotlin + Compose
+  Multiplatform for Desktop specifically because JavaFX's `TableView`
+  and built-in `Chart` classes give the Tab-key spreadsheet/graph detail
+  view essentially for free, versus needing to hand-build or interop for
+  that view under Compose. Traded off: JavaFX's look/momentum is more
+  dated than Compose's, and it's a separate runtime dependency (OpenJFX)
+  that needs to be bundled for distribution.
+- **Map view**: a custom-drawn 2D scene using JavaFX's `Canvas` node,
+  redrawn per simulated cycle rather than continuously animated — a
+  data-driven, procedurally generated map rather than a game-engine
+  scene.
+- **Detail/spreadsheet view** (the Tab-key drill-down): JavaFX
+  `TableView` for tabular history and JavaFX's built-in `Chart` classes
+  (line/bar/pie/scatter) for graphs — no third-party charting library
+  needed.
+- **Simulation engine lives in its own module, fully decoupled from the
+  UI module** (separate Gradle module within one multi-module build).
+  Most of what's been designed so far (Need→Strategy→Resolution, unit
+  variance, hierarchical stat aggregation, disasters/events) is pure
+  formulas and state with no inherent UI dependency. Keeping the
+  boundary clean makes the engine independently unit-testable (JUnit5 or
+  Kotest) and leaves room for a future headless/CLI mode (batch-running
+  or tuning simulations without launching the UI) — not something to
+  build now, just a reason to separate it from day one.
+- **Build tool**: Gradle with the Kotlin DSL — the idiomatic choice for
+  a Kotlin project, with good JavaFX plugin support for packaging.
+- **Packaging/distribution**: `jlink`/`jpackage` to bundle the JVM +
+  JavaFX runtime into a self-contained distributable, so end users don't
+  need a separate Java install.
 - **All randomness routed through a seeded PRNG** (variance rolls,
   disaster generation, regression checks, the chaos constant), rather
   than unseeded randomness — this makes a given simulation run fully
@@ -530,8 +547,6 @@ likelihood).
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
-- Choice of charting library (LiveCharts2 vs. OxyPlot) for the detail
-  view.
 - Save/load format for simulation configs and in-progress/completed runs.
 - Whether a reproducible seed becomes a user-facing feature (shareable
   seeds) or stays an internal implementation detail.
