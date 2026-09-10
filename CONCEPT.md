@@ -139,6 +139,47 @@ Example: a unit's farming knowledge base value is 52.
   - Is the society happier as a result of the path it took, independent
     of whether it "survived" in a strict population sense?
 
+## Stat System — General Principles
+
+Before locking in any concrete list of stats/traits, a few architectural
+rules apply across all of them:
+
+- **Flat and uniform under the hood.** Personality-style traits
+  (intelligence, work ethic, religiosity, risk tolerance), capability/
+  knowledge stats (farming knowledge, medical knowledge, tech knowledge),
+  and current-condition readouts (hunger, happiness) may be organized
+  into human-readable categories for documentation/UI clarity, but to the
+  simulation's algorithms they are all just **flat, uniformly-typed
+  values** — there is no special-cased "trait vs. capability" code path.
+  Everything blends together and is used the same way by formulas.
+- **Nothing is fixed except the chaos value.** Every stat — including
+  personality traits — can shift over time due to any number of factors;
+  there is no inherently static stat. Stats can also causally influence
+  *each other's* regression/growth, not just their own: e.g. rising
+  education/technology could increase work ethic's regression risk over
+  time, simulating growing dependence on automation. The **sole
+  exception** is the chaos constant itself: it is rolled once during
+  initial simulation setup and then stays fixed for the entire run — it
+  is never recalculated cycle to cycle like everything else.
+- **Cross-level influence flows in every direction.** Building on
+  Hierarchical Stat Aggregation & Cross-Level Influence: small
+  units/factions can meaningfully influence large aggregates, and large
+  aggregates can meaningfully influence small units/factions — influence
+  is never assumed to be one-directional at any scale.
+- **Default numeric scale is 1–100**, used as consistently as possible
+  across all stats/traits for simplicity. Genuinely count-like
+  quantities (population, raw resource stockpiles) are the practical
+  exception and may use their own natural units instead.
+- **No rigid trait/capability/state trichotomy.** An earlier idea to
+  split stats into "growable capabilities," "fixed personality traits,"
+  and "current-condition state" was considered and rejected — in
+  practice these categories blend into each other, consistent with the
+  "flat and uniform" and "nothing is fixed" principles above.
+- **Concrete stat taxonomy is intentionally deferred** — not overlooked.
+  The architecture above is meant to be locked in first so that whatever
+  concrete list of stats/traits gets defined later slots into a stable,
+  already-agreed structure.
+
 ## Factions
 
 Factions are the natural unit of multi-group dynamics (splitting,
@@ -428,9 +469,10 @@ likelihood).
 
 ## Open Questions / Not Yet Decided
 
-- Concrete taxonomy of detailed technology/culture sub-stats (what the
-  fine-grained breakdown actually consists of, e.g. agriculture,
-  medicine, military, governance, philosophy/religion, art/craft).
+- Concrete master list of all stats/traits (technology/culture sub-stats,
+  personality traits, capability stats, etc.) — deliberately deferred
+  until the sim's core architecture is settled; see Stat System —
+  General Principles.
 - How the sim/user judges whether a given tech/culture regression was
   actually "bad" for the society vs. a reasonable adaptation.
 - Concrete taxonomy of human-caused event types and their own
@@ -443,8 +485,8 @@ likelihood).
   suppress/boost which others, and by how much).
 - Exact formulas for how faction stats affect disaster severity and
   recovery speed.
-- Concrete list of faction/unit personality traits and their exact
-  interactions with strategy selection.
+- Exact interactions between specific personality traits and strategy
+  selection (once a concrete stat list exists).
 - Alliance formation criteria in more detail.
 - Third-party intervention trigger conditions at high complexity.
 - Exact discrete variance-band thresholds (what unit population ranges
