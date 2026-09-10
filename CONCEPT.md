@@ -565,10 +565,32 @@ than mixing stats and controls together:
   specific cells struck that cycle** (icon or highlight color),
   consistent with the already-decided redrawn-per-cycle (not
   continuously animated) JavaFX `Canvas` rendering approach.
-- **Detail view** (e.g. toggled with Tab): a spreadsheet-style breakdown
-  of simulation history — fine-grained data and graphs, likely at a
-  per-faction, per-year granularity, given the faction/unit-based data
-  model.
+
+### Playback controls
+
+Bottom bar contents (see "Overall window layout"): play/pause/step,
+speed control, and current year/cycle indicator, plus event-driven
+auto-pause:
+
+- **Auto-pause on significant events by default** — the sim pauses
+  itself when a disaster, faction split, war, or other significant event
+  occurs, so nothing gets missed if the user isn't watching closely at
+  higher speeds. The user resumes manually (Play) after reviewing it.
+- **Per-event-type configurable** — a settings toggle lets the user
+  choose which event types trigger a pause (e.g. pause on disasters but
+  not on minor faction squabbles).
+- **Global override** — a separate top-level toggle can turn
+  auto-pause off entirely, regardless of the per-type settings, for
+  users who'd rather just watch the sim run uninterrupted and review
+  everything after the fact via the detail/spreadsheet view's history.
+
+### Detail / spreadsheet view
+
+Toggled with Tab (see "Overall window layout" — this replaces/overlays
+the main map layout rather than being a permanent part of it): a
+spreadsheet-style breakdown of simulation history — fine-grained data
+and graphs, likely at a per-faction, per-year granularity, given the
+faction/unit-based data model.
 
 ## Disasters & Events
 
