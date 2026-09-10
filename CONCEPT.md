@@ -820,12 +820,38 @@ simulation only ever reads per-cell elements.
   high at steep, high-elevation cells (Mountains + minimal Forest cover
   to anchor snowpack), but *impact* weight is low right at the origin
   and grows moving downhill as the slide gathers mass, following the
-  local elevation gradient outward from the origin cell. Other disaster
-  types likely have their own gradient driver for spread (wind direction
-  for Wildfire/Sandstorm, downhill water flow for Flood, radial
-  distance-falloff from the epicenter cell for Earthquake) — avalanche
-  is the only one worked out in detail so far; the rest are open TBD
-  items, same pattern applied per disaster type.
+  local elevation gradient outward from the origin cell.
+
+### Spread pattern taxonomy
+
+Rather than a bespoke spread rule per disaster type, Avalanche's
+origin-vs-spread structure generalizes into six reusable pattern types.
+Every disaster type is tagged against one (or, for two types, a
+composite of two):
+
+| Pattern | Behavior | Disaster types |
+|---|---|---|
+| **Gradient flow** | Origin point; impact grows moving downhill along the local elevation gradient, away from the origin | Avalanche, Flood, Landslide, Volcanic eruption (lava component) |
+| **Radial falloff** | Origin point; intensity decreases with radial distance in all directions | Earthquake, Meteor |
+| **Directional track** | Origin point; moves along a path in a dominant direction (wind, storm movement), weakening over distance/time | Hurricane/Cyclone, Tornado, Wildfire, Volcanic eruption (ashfall component) |
+| **Broad area** | No single origin point; affects a contiguous region weighted by terrain suitability, no directional growth | Drought, Extreme heat, Blizzard |
+| **Point/localized** | Minimal-to-no spread beyond the origin cell or a tight cluster | Sinkhole |
+| **Contact/connectivity-driven** | Spreads along occupancy/trade proximity between cells and factions, not a physical terrain gradient | Epidemic (all variants) |
+
+- **Composites**: **Tsunami** combines Radial falloff (from the
+  triggering Earthquake or Meteor's origin) with coastal-adjacency
+  propagation (travels along Coastline cells, inland penetration weighted
+  by low elevation/proximity to coast). **Volcanic eruption** combines
+  Gradient flow (lava, downhill from the peak) with Directional track
+  (ash, wind-driven) as two simultaneous spread effects from one
+  origination event.
+- **Sandstorm** is grouped with Wildfire under Directional track (both
+  wind-driven), though its origination driver is Sand/Barren rather than
+  Forest/Grass fuel.
+- Exact per-pattern math (how quickly Gradient flow decays with
+  distance, how wide a Directional track's corridor is, etc.) is still
+  TBD — this locks in *which pattern* each disaster type uses, not the
+  formulas themselves.
 
 ### Severity scales
 
@@ -1093,11 +1119,12 @@ explicit mechanism since it operates through a different pathway
     into per-cell element values across the grid.
   - How the map-wide aggregate is computed from per-cell values (simple
     average, population-weighted, something else).
-  - Per-disaster-type origination and spread-pattern formulas — only
-    Avalanche (origin at steep/high-elevation cells, impact growing
-    downhill) is worked out in detail; the rest (wind-driven spread for
-    Wildfire/Sandstorm, downhill water flow for Flood, radial falloff for
-    Earthquake, etc.) are named but not designed.
+  - ~~Per-disaster-type origination and spread-pattern formulas~~ —
+    **resolved at the pattern level**: every disaster type is tagged
+    against one of six reusable spread patterns (Gradient flow, Radial
+    falloff, Directional track, Broad area, Point/localized,
+    Contact/connectivity-driven); see "Spread pattern taxonomy." Exact
+    per-pattern math (decay rate, track width, etc.) is still TBD.
   - ~~How the map's grid relates to the faction/unit population
     model~~ — **resolved**: units anchor to specific cells (multiple
     units may share a cell), faction territory is a broader, distinct
