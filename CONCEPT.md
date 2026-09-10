@@ -563,7 +563,38 @@ determine ranking**, not a fixed universal priority order:
 - **High complexity**: adds terrain considerations and third-party
   faction intervention — an uninvolved faction choosing to get involved
   politically, militarily, or covertly (subterfuge) in another pair's
-  conflict.
+  conflict. Unlocks at **complexity tier 8**, per Complexity tier scale
+  (1-10).
+
+### Third-party faction intervention
+
+Not a separate system — an uninvolved faction's decision to intervene in
+another pair's ongoing conflict is itself another instance of the
+standard Need→Strategy→Resolution loop, run by the intervening faction
+each cycle a nearby conflict is active:
+
+- **Need**: assembled from the intervening faction's relationship to
+  both combatants (Trust/Military Tension toward each, from the
+  Relationship structure), its ideological affinity with either side
+  (derived from Economic/Social Ideology, per the relationship
+  structure's existing affinity calculation), and its own
+  opportunity/threat perception (a decisive win by either side could
+  threaten or benefit the third party). This echoes the existing
+  "downward influence... overridden by need" pattern under Hierarchical
+  Stat Aggregation — a faction can act on another's behalf even absent a
+  strong prior relationship, if its own Need evaluation determines the
+  stakes matter enough.
+- **Strategy**: the intervening faction's trait profile (Risk Tolerance,
+  Charisma/Diplomatic Knowledge, Military Knowledge/Capacity,
+  Economic/Social Ideology — per Trait relevance by need domain) 
+  determines the *form* intervention takes: military support for one
+  side, diplomatic mediation, economic pressure, or covert support via
+  espionage.
+- **Resolution**: folds the third party's numbers into the
+  **already-existing** combat/negotiation/espionage resolution
+  machinery under Conflict, diplomacy, and covert action — intervention
+  doesn't need its own resolution mechanic, just an additional
+  participant in the existing one.
 
 ### Outcomes of conflict (loser's fate)
 
@@ -1262,7 +1293,11 @@ explicit mechanism since it operates through a different pathway
   probability (see "Trait relevance by need domain") — domain-to-trait
   mapping itself is locked.
 - Alliance formation criteria in more detail.
-- Third-party intervention trigger conditions at high complexity.
+- Exact weighting formula for third-party intervention's Need
+  assembly (how relationship, ideological affinity, and
+  opportunity/threat perception combine) — the general mechanism (an
+  N→S→R instance run by the intervening faction, tier 8+) is locked; see
+  Factions → "Third-party faction intervention."
 - Exact discrete variance-band thresholds (what unit population ranges
   map to "person/family/community" tiers).
 - Exact numeric progression for complexity tiers 2-4, 6-7, and 9 (variable
