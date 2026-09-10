@@ -446,6 +446,44 @@ land/resources are gained or ceded for peace), alliance formation, and
 espionage/political infiltration — infiltration does **not** require an
 active war state to occur.
 
+### Trait relevance by need domain
+
+With the full Master stat list (draft) now in place, hand-authoring
+every possible trait combination is combinatorially explosive (12+
+Personality/Trait and Capability/Knowledge stats). Instead, each **Need
+domain** has a small set of **relevant traits** that drive its Strategy
+selection and Resolution — the same pattern the farming example above
+already uses implicitly for the Hunger domain (Farming Knowledge +
+Intelligence, not all 12 stats at once):
+
+| Need domain | Relevant traits |
+|---|---|
+| Hunger / economic | Farming Knowledge, Work Ethic, Intelligence, Environmental Knowledge, Economic Ideology |
+| Security / conflict | Strength, Military Knowledge/Capacity, Risk Tolerance, Intelligence |
+| Diplomatic / social (negotiation, alliance-seeking, trade beyond pure economics) | Charisma, Diplomatic Knowledge, Communication Knowledge, Trust (relationship structure) |
+| Ideological / religious (unrest, schism pressure) | Religiosity, Social Ideology, Economic Ideology |
+| Medical / health | Medical Knowledge, Health, Education Level |
+| Technological / cultural development | Technology Knowledge, Intelligence, Risk Tolerance, Economic Ideology |
+
+**Worked example — Security domain** (same four-quadrant structure as
+the farming example, now for a different domain):
+- Security threat, high Strength + high Risk Tolerance + low Diplomatic
+  Knowledge → confronts directly, accepting higher casualty risk.
+- Security threat, high Strength + low Risk Tolerance → fortifies/
+  defends rather than initiating engagement.
+- Security threat, low Strength + high Charisma + high Diplomatic
+  Knowledge → seeks negotiation/alliance instead of fighting.
+- Security threat, low Strength + low Charisma + low everything else
+  relevant → may suffer a Darwinistic decline, or become a vassal
+  (echoing the existing Subjugation/vassalage outcome under Conflict,
+  diplomacy, and covert action → Outcomes of conflict).
+
+Exact weighting formulas for how each domain's relevant traits combine
+(which trait dominates Strategy *choice* vs. which affects Resolution
+*success probability*) are still TBD — this locks in *which traits
+matter to which domain*, not their exact math, same pattern as
+elsewhere in this doc.
+
 ### Need prioritization
 
 When multiple needs compete in the same cycle (e.g. low food *and* a
@@ -1182,8 +1220,10 @@ explicit mechanism since it operates through a different pathway
   event.
 - Exact formulas for how faction stats affect disaster severity and
   recovery speed.
-- Exact interactions between specific personality traits and strategy
-  selection (once a concrete stat list exists).
+- Exact weighting formulas for how a Need domain's relevant traits
+  combine — which trait dominates Strategy choice vs. Resolution success
+  probability (see "Trait relevance by need domain") — domain-to-trait
+  mapping itself is locked.
 - Alliance formation criteria in more detail.
 - Third-party intervention trigger conditions at high complexity.
 - Exact discrete variance-band thresholds (what unit population ranges
