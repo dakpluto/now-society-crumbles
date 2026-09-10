@@ -158,6 +158,35 @@ sim (environment, units, factions, tech/culture, disasters, etc.):
    mirrors how per-calculation unit variance noise (see Population
    Model) never feeds back into a unit's persistent base stat.
 
+### Complexity tier scale (1-10)
+
+**Complexity is a fine-grained 1-10 numeric scale** (a slider, not a
+handful of named modes), matching the illustrative examples already used
+elsewhere in this doc. All three mechanisms above, plus every other
+complexity-gated system (unique unit count range, third-party faction
+intervention, custom terrain composition editing), scale up **together
+and smoothly** across the same 10 tiers — there's one complexity number,
+not a separate slider per system.
+
+Four milestone tiers are locked in now, anchoring the ends and middle of
+the scale; the exact numeric progression connecting them (variable
+counts/ranges at tiers 2-4 and 6-7, subroutine unlock order, unit-count
+range at each step) is intentionally left TBD rather than designing all
+ten tiers' exact numbers now:
+
+| Tier | Starting-value control | Persistent detail | Notes |
+|---|---|---|---|
+| 1 (lowest) | Fixed presets, no adjustment | 0% — every sub-stat resets to the recalculated aggregate each cycle | No complexity-gated subroutines active; coarsest unit-count options only |
+| 5 (middle anchor) | ~10 variables adjustable within ±20% | Roughly half of sub-stats may persist independently | Matches the existing "complexity 5" example under Setup / Configuration |
+| 8 | All variables adjustable, unlimited range | Most sub-stats persist independently | Matches the existing "complexity 8" example; this is also where **third-party faction intervention** unlocks, matching the existing "High complexity" language under Factions → Complexity gating on faction interactions |
+| 10 (highest) | Little to no preset — user sets nearly everything from scratch | Aggregate becomes pure tracking/display, with zero effect on any individual detailed value | Matches the existing "Highest complexity" language under Setup / Configuration; also unlocks direct custom terrain-composition editing (see Terrain composition elements) and the widest unit-count range (theoretically one unit per person, soft performance warning still applies) |
+
+Tiers 2-4, 6-7, and 9 exist on the scale and are understood to
+interpolate smoothly between these anchors on every mechanism at once —
+their exact numeric values are deferred to the same later pass as the
+rest of the sim's concrete numeric tuning (terrain weights, severity
+tiers, etc.).
+
 ### Terrain composition elements
 
 The nine terrain archetypes (see Disasters & Events → Weight-sourcing
@@ -1089,7 +1118,10 @@ explicit mechanism since it operates through a different pathway
 - Third-party intervention trigger conditions at high complexity.
 - Exact discrete variance-band thresholds (what unit population ranges
   map to "person/family/community" tiers).
-- Exact complexity-level tiering (number of levels, what each unlocks).
+- Exact numeric progression for complexity tiers 2-4, 6-7, and 9 (variable
+  counts/ranges, subroutine unlock order, unit-count range at each step)
+  — tier count (10) and the milestone tiers (1, 5, 8, 10) are locked; see
+  "Complexity tier scale (1-10)."
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
