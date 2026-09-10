@@ -511,6 +511,21 @@ rather than higher levels being pure reporting rollups of lower ones.
 - Live-tracked high-level stats while watching: technology level,
   society happiness, hunger, population, etc.
 
+### Overall window layout
+
+Sidebar and bottom bar have distinct, non-overlapping purposes rather
+than mixing stats and controls together:
+
+- **Sidebar** (fixed-width, e.g. right side) — **informational only**:
+  the live high-level stat readout (technology level, happiness, hunger,
+  population, etc.) plus likely a faction list/legend. Scales cleanly if
+  more stats get added later without crowding the map.
+- **Bottom bar** (full width) — **controls only**: playback controls
+  (play/pause/step, speed), current simulated year/cycle indicator.
+- **Map** fills the remaining central space.
+- The Tab-key **detail view** (see below) is a separate full view
+  toggled on top of/in place of this layout, not a permanent part of it.
+
 ### Main map view
 
 - **Square grid cells for v1.** Pairs naturally with the existing
