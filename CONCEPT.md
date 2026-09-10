@@ -306,10 +306,16 @@ other systems (culture sub-stats, human-caused events, etc.) get
 designed in more detail.
 
 - **Personality/Trait**: Intelligence, Work Ethic, Religiosity, Risk
-  Tolerance, Ideology (exact representation of Ideology — a single
-  alignment score vs. something multi-dimensional — still TBD)
+  Tolerance, Strength, Charisma, **Economic Ideology**, **Social
+  Ideology** (Ideology is two stats, not one — following the political
+  compass model: Economic Ideology as the left-right axis, Social
+  Ideology as the authoritarian-libertarian axis)
 - **Capability/Knowledge**: Farming Knowledge, Medical Knowledge,
-  Technology Knowledge, Military Knowledge/Capacity
+  Technology Knowledge, Military Knowledge/Capacity, Communication
+  Knowledge, Diplomatic Knowledge (an entity's own skill at diplomacy —
+  distinct from Diplomatic Influence, which is a derived property of the
+  pairwise relationship structure below, not a flat stat), Environmental
+  Knowledge
 - **Current-condition/State**: Hunger, Happiness, Health, Security
   (perceived threat level)
 - **Aggregate/composite** (each backed by complexity-gated detailed
@@ -994,8 +1000,6 @@ likelihood).
 - Exact structure/formula for the faction-to-faction relationship
   matrix/graph, and how Diplomatic Influence derives from it (see
   "Master stat list (draft)").
-- Exact representation of the Ideology stat (single alignment score vs.
-  multi-dimensional).
 - How the sim/user judges whether a given tech/culture regression was
   actually "bad" for the society vs. a reasonable adaptation.
 - Concrete taxonomy of human-caused event types and their own
