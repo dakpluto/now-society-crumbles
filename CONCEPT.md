@@ -969,6 +969,24 @@ vary — some cells rolling heavy Mountains/Rock, others Hills or Valley —
 rather than every cell being identical), and from that point on the
 simulation only ever reads per-cell elements.
 
+**Generation algorithm: noise-based (Perlin/simplex).** Each terrain
+element category (Topography, Ground composition, Vegetation cover,
+Water features) gets its own noise field across the grid, rather than
+each cell independently rolling its elements with no relationship to
+its neighbors — this produces natural-looking clusters and gradients
+(a contiguous mountain range, a patch of Forest) instead of
+salt-and-pepper noise. Consistent with the config schema's "inputs
+only, regenerate deterministically" decision, the noise fields are
+seeded from the run's own seed — the same config always procedurally
+generates the identical map. Each field is biased/scaled toward the
+archetype's target element-composition weights (see Weight-sourcing
+methodology) once those are numerically defined; some cross-category
+correlation (e.g. Mountains topography co-occurring with Rock ground
+composition, matching how real reference regions actually look) is
+desirable but left as a deferred refinement rather than specified now —
+exact correlation mechanics are numeric-tuning-level detail, same
+pattern as the rest of this doc.
+
 - **Occurrence (macro roll)**: whether a disaster type triggers this
   cycle at all is weighted by the aggregate of element values across
   the whole map (e.g. summed/averaged Coastline exposure map-wide
@@ -1284,8 +1302,12 @@ explicit mechanism since it operates through a different pathway
     resolution is a fixed engine constant, so map size changes cell
     *count*, not cell fineness; see Visualization / UI → Main map view →
     "Map size and grid resolution."
-  - The procedural generation algorithm that turns an archetype preset
-    into per-cell element values across the grid.
+  - ~~The procedural generation algorithm that turns an archetype
+    preset into per-cell element values across the grid.~~ —
+    **resolved**: noise-based (Perlin/simplex), one field per element
+    category, seeded from the run's own seed; see "Spatial model: map
+    grid and per-cell elements." Cross-category correlation (e.g.
+    Mountains co-occurring with Rock) is a deferred refinement.
   - How the map-wide aggregate is computed from per-cell values (simple
     average, population-weighted, something else).
   - ~~Per-disaster-type origination and spread-pattern formulas~~ —
