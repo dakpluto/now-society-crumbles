@@ -395,10 +395,11 @@ These live in a **separate relationship structure** instead; see
   Trust; war lowers Trust and raises Military Tension for both
   directions, plausibly asymmetrically depending on outcome (the loser's
   view of the winner likely shifts more than the reverse).
-- **Open**: exact initialization on faction split (does the new faction
-  inherit its parent's existing values toward third parties, with its
-  own relationship to the parent starting adjusted to reflect the
-  schism?) is still TBD.
+- **Resolved**: initialization on faction split — the new faction
+  inherits its parent's existing values toward third parties, with its
+  own relationship to the parent starting adjusted to reflect how
+  contentious the split was; see Factions → "Faction formation
+  (splitting)."
 
 ## Factions
 
@@ -409,13 +410,49 @@ factions, each composed of population units.
 
 ### Faction formation (splitting)
 
-Faction splits are not a special hardcoded system — they emerge
-naturally from the unit-variance math: if a unit's randomized roll on a
-value like happiness or ideology drifts far enough from its faction's
-norm, that's the mechanical trigger for it peeling off to found a new
-faction. Possible contributing factors: happiness divergence, geographic
-distance from the faction's center, resource competition, succession
-disputes, religious/ideological schisms.
+**Two independent trigger pathways**, coexisting rather than competing —
+the same "two valid pathways to the same outcome" pattern already
+established for war under Human-caused events:
+
+1. **Unit-variance-driven (bottom-up)**: not a special hardcoded system —
+   emerges naturally from the unit-variance math. If a unit's randomized
+   roll on a value like happiness or ideology drifts far enough from its
+   faction's norm, that's the mechanical trigger for it peeling off to
+   found a new faction. Possible contributing factors: happiness
+   divergence, geographic distance from the faction's center, resource
+   competition, succession disputes, religious/ideological schisms.
+2. **Political/social-stat-driven (top-down)**: the Faction Split entry
+   in the Human-caused events self-event roster — a faction-level
+   occurrence roll weighted by the faction's own stats (Charisma,
+   Economic/Social Ideology, Religiosity, etc.), the same
+   weighted-occurrence architecture as every other human-caused event,
+   representing an acute political schism/coup-style fracture rather
+   than gradual individual drift.
+
+**Unified partitioning mechanic, regardless of which pathway triggered
+the split**: once a split is triggered, which units end up in which
+resulting faction is always resolved the same way — units are grouped
+by whichever value(s) drove the divergence (e.g. a Social
+Ideology-driven trigger partitions units roughly along their individual
+Social Ideology values, above/below the parent faction's mean; a
+geography-driven trigger partitions by distance from the faction
+center). This reuses the per-unit data the unit-variance system already
+tracks rather than needing a second, separate partitioning formula for
+the top-down pathway.
+
+**Relationship structure initialization on split** (resolving the
+previously-open question under "Relationship structure
+(faction-to-faction)"): the new (splinter) faction **inherits copies of
+its parent's existing relationship values** toward third parties as a
+starting point — the schism doesn't erase the society's prior history
+with outside factions. The parent↔splinter relationship itself starts
+**adjusted to reflect how contentious the split was**: a split triggered
+by the top-down pathway with high Military Tension/ideological-conflict
+inputs starts with a steep mutual Trust penalty; a split driven by the
+bottom-up unit-variance pathway (gradual drift, resource competition)
+starts comparatively milder. This reuses the triggering event's own
+inputs as the contentiousness signal rather than needing a separate
+formula.
 
 ### Core faction decision loop: Need → Strategy → Resolution
 
@@ -1089,9 +1126,10 @@ architecture pattern.
    another: Government Overthrow/Coup, Martial Law, Civil
    Unrest/Rebellion, Recession, Famine Deaths, Crime Wave, and a
    political/social-stat-driven **Faction Split** — a second,
-   complementary trigger pathway alongside the existing
-   unit-variance-driven split mechanism under Faction formation
-   (splitting); exact interaction between the two pathways is TBD.
+   independent trigger pathway alongside the existing
+   unit-variance-driven split mechanism, both coexisting; see Factions →
+   "Faction formation (splitting)" for how they interact and how units
+   are partitioned once triggered.
 2. **Events against others** — inherently pairwise, involving two or
    more factions: War, Espionage, Treaty/Alliance offer, Unification.
 
@@ -1186,18 +1224,17 @@ explicit mechanism since it operates through a different pathway
   structure's three dimensions (see "Relationship structure
   (faction-to-faction)") — structure itself (asymmetric,
   Trust/Trade/Military Tension) is locked.
-- Relationship structure initialization on faction split — does the new
-  faction inherit its parent's values toward third parties, with its own
-  relationship to the parent adjusted to reflect the schism?
 - How the sim/user judges whether a given tech/culture regression was
   actually "bad" for the society vs. a reasonable adaptation.
 - Exact weight formulas for human-caused event occurrence (which stats
   weight which self events; how relationship-structure values plus both
   factions' stats combine for events against others) — roster and
   architecture are locked, see "Human-caused events."
-- Exact interaction between the two Faction Split trigger pathways
-  (unit-variance-driven vs. political/social-stat-driven) — do they
-  stack, compete, or apply to different scenarios?
+- Exact "how contentious was the split" formula translating a Faction
+  Split's triggering inputs (Military Tension, etc.) into the specific
+  parent↔splinter Trust penalty — the general rule (top-down/political
+  triggers start worse than bottom-up/gradual ones) is locked; see
+  Factions → "Faction formation (splitting)."
 - Pull and normalize the actual EM-DAT/USGS/NOAA data for the finalized
   terrain archetype list into concrete baseline weights (list and
   reference regions are locked — see "Weight-sourcing methodology").
