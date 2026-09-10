@@ -356,10 +356,49 @@ Faction-to-faction relationship strength and diplomatic influence
 (already referenced under Factions and Hierarchical Stat Aggregation)
 are inherently **pairwise** — faction A's standing with faction B
 specifically — which doesn't fit the flat per-entity stat model above.
-These live in a **separate relationship matrix/graph structure**
-instead (one value per faction pair, not one value per faction), with
-Diplomatic Influence treated as a derived property of that structure
-rather than its own flat stat. Exact structure/formula still TBD.
+These live in a **separate relationship structure** instead; see
+"Relationship structure (faction-to-faction)" below.
+
+### Relationship structure (faction-to-faction)
+
+- **Asymmetric**: A's relationship toward B and B's toward A are tracked
+  separately and can differ — a small faction can distrust a powerful
+  neighbor more than that neighbor distrusts it. This also matches the
+  directional nuance already used elsewhere in this doc (epidemic
+  spillover, upward/downward influence).
+- **Multi-dimensional, not a single blended score**: for every ordered
+  faction pair (A→B), three tracked dimensions, each on the sim's
+  default 1-100 scale:
+  - **Trust** — general goodwill/perceived reliability. Primary gate for
+    aid-rendering and alliance willingness (the "relationship level"
+    gate under Hierarchical Stat Aggregation → Downward influence).
+  - **Trade** — economic relationship strength/volume. Feeds
+    trade-seeking Strategy resolution under the Core faction decision
+    loop.
+  - **Military Tension** — hostility/perceived threat. Feeds the
+    occurrence weighting for the "events against others" human-caused
+    event category (War, Espionage).
+- **Diplomatic Influence and ideological affinity are derived, not
+  stored.** Diplomatic Influence is computed from this structure (exact
+  formula TBD) rather than being its own tracked value. Ideological
+  affinity between two factions is computed on the fly from their
+  existing Economic/Social Ideology stats (a distance/similarity
+  calculation) rather than needing a fourth stored dimension here —
+  reuses data that already exists instead of duplicating it.
+- **Updates flow through the same Need→Strategy→Resolution loop as
+  everything else**, not a separate relationship-update system: every
+  relevant interaction (trade, aid, conflict, espionage
+  detection/attribution, treaty/alliance formation) adjusts one or more
+  of the three dimensions as a standard output of that interaction's
+  Resolution step. E.g. successful trade raises Trade (and likely a
+  smaller Trust bump); a detected-and-resented covert action lowers
+  Trust; war lowers Trust and raises Military Tension for both
+  directions, plausibly asymmetrically depending on outcome (the loser's
+  view of the winner likely shifts more than the reverse).
+- **Open**: exact initialization on faction split (does the new faction
+  inherit its parent's existing values toward third parties, with its
+  own relationship to the parent starting adjusted to reflect the
+  schism?) is still TBD.
 
 ## Factions
 
@@ -1078,9 +1117,13 @@ explicit mechanism since it operates through a different pathway
 - Technology/Culture sub-stat breakdowns, and any further stats surfaced
   by other not-yet-designed systems — a first draft master list now
   exists; see Stat System → "Master stat list (draft)."
-- Exact structure/formula for the faction-to-faction relationship
-  matrix/graph, and how Diplomatic Influence derives from it (see
-  "Master stat list (draft)").
+- Exact Diplomatic Influence derivation formula from the relationship
+  structure's three dimensions (see "Relationship structure
+  (faction-to-faction)") — structure itself (asymmetric,
+  Trust/Trade/Military Tension) is locked.
+- Relationship structure initialization on faction split — does the new
+  faction inherit its parent's values toward third parties, with its own
+  relationship to the parent adjusted to reflect the schism?
 - How the sim/user judges whether a given tech/culture regression was
   actually "bad" for the society vs. a reasonable adaptation.
 - Exact weight formulas for human-caused event occurrence (which stats
