@@ -72,8 +72,9 @@ interest in Kotlin — see the JVM stack below.)
   hand-edit, and share. **The shareable config file is the seed plus
   every starting value** (society size, era, environment variables,
   starting traits, complexity level, unit count, etc.) — the full set of
-  inputs needed to reproduce a run exactly, not the seed alone. Exact
-  field-by-field schema and versioning are still TBD.
+  inputs needed to reproduce a run exactly, not the seed alone. Field-by-
+  field schema now drafted — see "Shareable config/seed file schema"
+  below.
 - **Build tool**: Gradle with the Kotlin DSL — the idiomatic choice for
   a Kotlin project, with good JavaFX plugin support for packaging.
 - **Repo conventions**: target the latest LTS JDK and latest stable
@@ -94,6 +95,46 @@ interest in Kotlin — see the JVM stack below.)
   user-facing, definable value** — the user can set a specific seed
   before running (or let one be generated), and share it so someone else
   can watch the exact same society unfold.
+
+### Shareable config/seed file schema
+
+**Stores resolved input parameters, not a generated snapshot.** Loading
+a config re-runs the same deterministic procedural generation (map,
+starting units) from these inputs plus the seed, rather than storing
+every already-generated per-cell/per-unit value — keeps the file small
+and genuinely hand-editable, matching the "easy to read, hand-edit, and
+share" goal. **Trade-off, accepted for v1**: reproducibility holds
+within the same schema/engine version only — a future change to the
+procedural generation algorithm would regenerate a different result
+from an old file's same seed. No cross-version migration system is
+planned; `schemaVersion` just lets the app detect and reject/flag an
+incompatible old file rather than silently misbehaving.
+
+**The config always stores fully-resolved values for every field,
+regardless of what complexity tier produced them** — even a tier-1 run
+where the user couldn't adjust anything still resolves to concrete
+numbers, and those are what get stored. This keeps the schema uniform
+(no sparse/conditional fields based on complexity); `complexityLevel` is
+stored purely so **reopening a shared config in the setup screen
+restores its original tier's adjustable ranges, and the user can edit
+any value within that tier's scope before running** — loading a config
+populates the same adaptive form a from-scratch setup would use, not an
+immutable locked recipe.
+
+Top-level fields (`SimulationConfig`, a `kotlinx.serialization` data
+class):
+
+| Field | Contents |
+|---|---|
+| `schemaVersion` | Engine/schema version this config was created under |
+| `seed` | The user-facing, definable PRNG seed |
+| `complexityLevel` | 1-10, per Complexity tier scale — for setup-screen re-editing, not to gate which other fields exist |
+| `societySize` | Starting population count |
+| `startingEra` | Starting era (exact era enum list still TBD — not designed elsewhere in this doc yet) |
+| `environment` | Resolved water resources, land quality, wildlife, and weather pattern values; resolved terrain composition per element category (Topography, Ground composition, Vegetation cover, Water features); which terrain archetype (if any) it started from, kept only as display metadata since the resolved element values are what the simulation actually reads |
+| `startingTraits` | Resolved starting values for whichever Personality/Trait and Capability/Knowledge stats are configurable at setup (which subset is configurable is itself complexity-gated, same as everything else under Complexity level — unified definition, not a special case) |
+| `uniqueUnitCount` | The selected unit count |
+| `map` | Grid dimensions/resolution — exact shape TBD pending the grid-resolution decision (see Open Questions) |
 
 ## Setup / Configuration
 
@@ -1307,10 +1348,10 @@ explicit mechanism since it operates through a different pathway
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
-- Exact JSON schema for the shareable simulation config/seed file
-  (field-by-field structure, versioning strategy) — decided that it holds
-  the seed *plus* every starting value, not the seed alone; the concrete
-  schema itself is still open.
+- Finalized starting-era enum (Caveman, Bronze Age, Modern, etc. were
+  only ever given as illustrative examples under Setup / Configuration;
+  no concrete list exists) — surfaced by drafting the config schema's
+  `startingEra` field; see "Shareable config/seed file schema."
 - Which specific formula steps across the sim (beyond combat
   terrain/proximity) warrant a complexity-gated effective-value
   subroutine vs. just using the raw baseline value directly.
