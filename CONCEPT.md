@@ -158,6 +158,38 @@ sim (environment, units, factions, tech/culture, disasters, etc.):
    mirrors how per-calculation unit variance noise (see Population
    Model) never feeds back into a unit's persistent base stat.
 
+### Terrain composition elements
+
+The nine terrain archetypes (see Disasters & Events → Weight-sourcing
+methodology) aren't atomic labels — each is a **weighted composition of
+underlying terrain elements**, grouped into four categories. This is the
+same preset/composition relationship the complexity system already uses
+elsewhere (an archetype is just a preset starting mix); it also means a
+future high-complexity "custom terrain" mode is just another application
+of the existing complexity-gated preset mechanic, not a new system. Only
+the element list is being locked in now — actual per-archetype weight
+values (e.g. "Desert is 70% Sand, 20% Hills, 10% Rock") are deferred to
+the full environment-variables pass.
+
+- **Topography** (elevation/shape): Flat/Plains, Hills, Mountains,
+  Valley/Canyon, Plateau
+- **Ground composition** (surface material): Sand, Clay, Loam, Rock,
+  Permafrost, Peat/Bog
+- **Vegetation cover**: Barren/None, Grass/Scrubland, Forest/Trees,
+  Moss/Tundra vegetation, Marsh/Mangrove
+- **Water features** (geographic adjacency — distinct from the
+  *"water resources"* environment variable, which is about abundance/
+  reliability, not physical adjacency): Coastline, River/Lake-adjacent,
+  Wetland-saturated, Landlocked
+
+**Open question**: whether the disaster weight table (currently keyed to
+the terrain *archetype*, per Weight-sourcing methodology) should
+eventually be computed from the underlying element composition directly
+— e.g. a custom terrain with heavy Coastline weighting inherits more
+hurricane risk automatically — or stay a flat per-archetype lookup for
+simplicity. Not decided; flat per-archetype is the current default since
+that's what's already been sourced from EM-DAT/USGS/NOAA.
+
 ## Population Model: Unique Units
 
 Rather than simulating every individual at every scale, the population is
@@ -704,6 +736,13 @@ likelihood).
 
 ## Open Questions / Not Yet Decided
 
+- Per-archetype terrain element composition weights (e.g. Desert's exact
+  Sand/Hills/Rock mix) — element list is locked (see "Terrain
+  composition elements"), actual weights deferred to the full
+  environment-variables pass.
+- Whether the disaster weight table should eventually derive from
+  terrain element composition directly instead of a flat per-archetype
+  lookup (see "Terrain composition elements").
 - Concrete master list of all stats/traits (technology/culture sub-stats,
   personality traits, capability stats, etc.) — deliberately deferred
   until the sim's core architecture is settled; see Stat System —
