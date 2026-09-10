@@ -18,6 +18,41 @@ way (growth, fragmentation, technological/cultural evolution, happiness).
 Core question the sim answers: **did the society survive, and what kind
 of story did it tell getting there?**
 
+## Technical Approach
+
+Decided ahead of any scaffolding, so later design decisions can assume
+this shape:
+
+- **Native desktop app**, not a web app or general game engine. The
+  simulation itself is cycle/turn-based (advancing by years, not
+  real-time physics/frame updates), so a full game engine (Unity,
+  Godot, Unreal) would be more overhead than the visual ambition needs.
+- **C# / .NET** (latest stable/LTS release).
+- **Avalonia UI** as the application shell (a modern, cross-platform-
+  capable XAML UI framework, spiritual successor to WPF), using the
+  MVVM pattern via CommunityToolkit.Mvvm.
+- **Map view**: a custom-drawn 2D canvas using **SkiaSharp**, redrawn
+  per simulated cycle rather than continuously animated — a data-driven,
+  procedurally generated map rather than a game-engine scene.
+- **Detail/spreadsheet view** (the Tab-key drill-down): Avalonia's
+  DataGrid control for tabular history, paired with an open-source
+  charting library (LiveCharts2 or OxyPlot — both support Avalonia) for
+  graphs.
+- **Simulation engine lives in its own class library, fully decoupled
+  from the UI project.** Most of what's been designed so far (Need→
+  Strategy→Resolution, unit variance, hierarchical stat aggregation,
+  disasters/events) is pure formulas and state with no inherent UI
+  dependency. Keeping the boundary clean makes the engine independently
+  unit-testable and leaves room for a future headless/CLI mode (batch-
+  running or tuning simulations without launching the UI) — not
+  something to build now, just a reason to separate it from day one.
+- **All randomness routed through a seeded PRNG** (variance rolls,
+  disaster generation, regression checks, the chaos constant), rather
+  than unseeded randomness — this makes a given simulation run fully
+  reproducible from its seed + starting configuration, and could become
+  a user-facing feature later (sharing a seed so someone else can watch
+  the same society unfold).
+
 ## Setup / Configuration
 
 - **Society size**: from as few as ~10 people to tens/hundreds of
@@ -495,6 +530,11 @@ likelihood).
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
+- Choice of charting library (LiveCharts2 vs. OxyPlot) for the detail
+  view.
+- Save/load format for simulation configs and in-progress/completed runs.
+- Whether a reproducible seed becomes a user-facing feature (shareable
+  seeds) or stays an internal implementation detail.
 - Which specific formula steps across the sim (beyond combat
   terrain/proximity) warrant a complexity-gated effective-value
   subroutine vs. just using the raw baseline value directly.
