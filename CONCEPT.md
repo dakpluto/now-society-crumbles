@@ -501,11 +501,20 @@ rather than higher levels being pure reporting rollups of lower ones.
   defined once disaster types are finalized; see "Secondary/cascading
   disasters" below for the example pairs recorded so far.
 - A disaster occurring reduces the chance of that **same** disaster type
-  repeating in the immediately following cycles, decaying back toward
-  its normal baseline weight over time (a cooldown/decay curve, not a
-  hard lockout). **Exception: Earthquake** — an occurrence briefly
+  repeating in the immediately following cycles, decaying back *up*
+  toward its normal baseline weight over time (a cooldown/decay curve,
+  not a hard lockout). **Exception: Earthquake** — an occurrence briefly
   *elevates* its own repeat-weight first (aftershocks) before decaying
-  down to baseline, the reverse of the general pattern.
+  back *down* to baseline, the reverse of the general pattern.
+  - The elevated repeat-weight governs only whether an aftershock
+    *occurs* — it does **not** bias the aftershock toward the mainshock's
+    strength. A separate, independent roll against the Richter/Moment
+    Magnitude severity scale determines aftershock magnitude, and that
+    roll is weighted **toward lower magnitudes than the mainshock**: per
+    USGS, an aftershock matching or exceeding the mainshock's magnitude
+    (foreshocks/pre-tremors excluded — those are a separate, unmodeled
+    concept) happens only ~5% of the time. Exact shape of the
+    below-mainshock portion of that distribution is still TBD.
 
 **Disaster roster** (natural disasters only — human-caused events, see
 below, use separate formulas): Drought, Sandstorm, Hurricane/Cyclone,
@@ -649,7 +658,10 @@ likelihood).
   using in-sim scales (flood, wildfire, landslide, sinkhole, epidemic,
   etc. — see "Severity scales").
 - Exact decay curve shape for post-disaster repeat-suppression (and the
-  separate aftershock elevation-then-decay curve for Earthquake).
+  separate aftershock elevation-then-decay curve for Earthquake), plus
+  the exact shape of the below-mainshock portion of the aftershock
+  magnitude distribution (the ~5% match-or-exceed floor is set; the rest
+  of the curve isn't).
 - Full cross-disaster weight-interaction mapping, with concrete
   magnitudes — draft example pairs recorded under "Secondary/cascading
   disasters," but not yet exhaustive or quantified.
