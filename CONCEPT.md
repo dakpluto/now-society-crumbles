@@ -54,12 +54,32 @@ interest in Kotlin — see the JVM stack below.)
   Most of what's been designed so far (Need→Strategy→Resolution, unit
   variance, hierarchical stat aggregation, disasters/events) is pure
   formulas and state with no inherent UI dependency. Keeping the
-  boundary clean makes the engine independently unit-testable (JUnit5 or
-  Kotest) and leaves room for a future headless/CLI mode (batch-running
-  or tuning simulations without launching the UI) — not something to
-  build now, just a reason to separate it from day one.
+  boundary clean makes the engine independently unit-testable and leaves
+  room for a future headless/CLI mode (batch-running or tuning
+  simulations without launching the UI) — not something to build now,
+  just a reason to separate it from day one.
+- **Testing: Kotest.** Runs on the same JUnit Platform (so IDE/Gradle
+  tooling works normally) but adds property-based testing, which fits
+  this design well — most of the system is randomized formulas with
+  bounded variance (unit bands, regression risk, disaster rolls, the
+  chaos constant), and property tests can assert invariants (e.g. "a
+  regressed stat never drops below 0," "community-tier variance never
+  exceeds its band") across thousands of random rolls rather than a
+  handful of hand-picked examples.
+- **Save/load format: JSON via kotlinx.serialization** — plain Kotlin
+  data classes serialize with an annotation, no reflection-heavy setup.
+  Chosen specifically so simulation configs (and seeds, once/if those
+  become user-facing) are easy for people to read, hand-edit, and share.
 - **Build tool**: Gradle with the Kotlin DSL — the idiomatic choice for
   a Kotlin project, with good JavaFX plugin support for packaging.
+- **Repo conventions**: target the latest LTS JDK and latest stable
+  Kotlin available whenever scaffolding actually begins (not pinned to a
+  specific version now, since it will drift before then); GitHub Actions
+  CI to build and run tests on every push/PR; Semantic Versioning,
+  starting in `0.x.y` during early development and moving to `1.0.0`
+  once a full simulation can be configured and run end to end.
+- **License: MIT** (see `LICENSE` at the repo root) — chosen for the
+  eventual open-source release.
 - **Packaging/distribution**: `jlink`/`jpackage` to bundle the JVM +
   JavaFX runtime into a self-contained distributable, so end users don't
   need a separate Java install.
@@ -547,9 +567,9 @@ likelihood).
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
-- Save/load format for simulation configs and in-progress/completed runs.
 - Whether a reproducible seed becomes a user-facing feature (shareable
   seeds) or stays an internal implementation detail.
+- Exact JSON schema for a shareable simulation config/seed file.
 - Which specific formula steps across the sim (beyond combat
   terrain/proximity) warrant a complexity-gated effective-value
   subroutine vs. just using the raw baseline value directly.
