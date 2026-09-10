@@ -134,12 +134,19 @@ class):
 | `environment` | Resolved water resources, land quality, wildlife, and weather pattern values; resolved terrain composition per element category (Topography, Ground composition, Vegetation cover, Water features); which terrain archetype (if any) it started from, kept only as display metadata since the resolved element values are what the simulation actually reads |
 | `startingTraits` | Resolved starting values for whichever Personality/Trait and Capability/Knowledge stats are configurable at setup (which subset is configurable is itself complexity-gated, same as everything else under Complexity level — unified definition, not a special case) |
 | `uniqueUnitCount` | The selected unit count |
-| `map` | Grid dimensions/resolution — exact shape TBD pending the grid-resolution decision (see Open Questions) |
+| `map` | Map size (independent of population/complexity — see Setup / Configuration and Main map view → "Map size and grid resolution"); cell resolution itself isn't stored since it's a fixed engine constant, not a per-run setting |
 
 ## Setup / Configuration
 
 - **Society size**: from as few as ~10 people to tens/hundreds of
   thousands.
+- **Map size**: an **independently configurable** setup variable, not
+  derived from population — lets density itself become meaningful (a
+  tiny population in a vast wilderness, or a huge population crammed
+  into a small territory), rather than every run's territory being
+  auto-scaled to its population. See "Map size and grid resolution"
+  under Visualization / UI → Main map view for how this becomes actual
+  grid dimensions.
 - **Starting era**: Caveman, Bronze Age, Modern, etc.
 - **Environment variables**: water resources, land quality, wildlife,
   weather patterns, terrain, etc.
@@ -780,6 +787,16 @@ than mixing stats and controls together:
 
 ### Main map view
 
+- **Map size and grid resolution**: map size (physical territory scale)
+  is set independently of population (see Setup / Configuration).
+  **Cell resolution — how much area one cell represents — is a fixed
+  engine constant, not gated by complexity level**, unlike nearly
+  everything else in this doc. A larger map size means proportionally
+  **more cells at the same fixed resolution**, not fewer/coarser cells;
+  complexity level has no effect on grid fidelity at all. The existing
+  soft-performance-warning pattern (already used for high unit counts)
+  applies here too — a very large map size produces a large cell count,
+  which should warn rather than hard-cap.
 - **Square grid cells for v1.** Pairs naturally with the existing
   elevation/gradient-driven disaster spread model. **Hex grid is a
   planned "2.0" upgrade** (uniform adjacency distance in every
@@ -1261,8 +1278,12 @@ explicit mechanism since it operates through a different pathway
   a two-layer roll (map-wide aggregate for whether a disaster triggers,
   per-cell local elements for where it strikes) — see "Spatial model: map
   grid and per-cell elements." Still open within that:
-  - Grid resolution/cell size, and how it scales with society
-    size/population and map area.
+  - ~~Grid resolution/cell size, and how it scales with society
+    size/population and map area.~~ — **resolved**: map size is
+    independently configurable (not derived from population); cell
+    resolution is a fixed engine constant, so map size changes cell
+    *count*, not cell fineness; see Visualization / UI → Main map view →
+    "Map size and grid resolution."
   - The procedural generation algorithm that turns an archetype preset
     into per-cell element values across the grid.
   - How the map-wide aggregate is computed from per-cell values (simple
@@ -1278,8 +1299,10 @@ explicit mechanism since it operates through a different pathway
     units may share a cell), faction territory is a broader, distinct
     claimed-region concept that can include unoccupied cells; see
     Visualization / UI → "Main map view."
-  - How this spatial layer interacts with complexity level (is grid
-    resolution or spread-pattern detail itself complexity-gated).
+  - ~~How this spatial layer interacts with complexity level~~ —
+    **resolved**: it doesn't. Grid resolution is a fixed engine
+    constant, not gated by complexity level, unlike nearly everything
+    else in this doc; see "Map size and grid resolution."
   - Exact cell color/icon mapping per terrain element (art-direction
     pass, not architecture).
   - Map zoom/pan mechanics and camera controls.
