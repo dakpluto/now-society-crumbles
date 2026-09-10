@@ -182,13 +182,19 @@ the full environment-variables pass.
   reliability, not physical adjacency): Coastline, River/Lake-adjacent,
   Wetland-saturated, Landlocked
 
-**Open question**: whether the disaster weight table (currently keyed to
-the terrain *archetype*, per Weight-sourcing methodology) should
-eventually be computed from the underlying element composition directly
-— e.g. a custom terrain with heavy Coastline weighting inherits more
-hurricane risk automatically — or stay a flat per-archetype lookup for
-simplicity. Not decided; flat per-archetype is the current default since
-that's what's already been sourced from EM-DAT/USGS/NOAA.
+**Decided**: the disaster weight table is computed from underlying
+element composition directly, not a flat per-archetype lookup — the
+archetype name is setup-time UI sugar only. This is resolved in detail
+under Disasters & Events → "Spatial model: map grid and per-cell
+elements," which also introduces the map as a **grid of cells**, each
+carrying its own local element composition rather than one composition
+for the whole map.
+
+**The map itself (grid resolution, procedural per-cell generation from
+an archetype preset, how map size scales with society size/population,
+and per-disaster spread-pattern formulas beyond the worked Avalanche
+example) is flagged as a large, still mostly-open area of design to
+come back to as its own focused pass** — see Open Questions.
 
 ## Population Model: Unique Units
 
@@ -514,18 +520,20 @@ rather than higher levels being pure reporting rollups of lower ones.
 ### Natural disasters
 
 - Each cycle, natural disasters have a chance to occur, **weighted by the
-  terrain/environment types** configured at setup — e.g. desert terrain
-  carries a high sandstorm weight and very low hurricane weight.
-  Baseline weights per terrain/disaster pairing are sourced from
-  real-world historical data (see "Weight-sourcing methodology" below)
-  rather than invented arbitrarily.
+  aggregate terrain *elements*** across the map — not by the terrain
+  archetype's name. The archetype label (Desert, Tundra, etc.) is purely
+  a setup-time UI convenience/preset; the simulation's disaster math
+  never reads it, only the underlying element composition it seeded. See
+  "Spatial model: map grid and per-cell elements" below.
 - Each disaster type also has its own **impact-scope weighting** — a
   separate distribution governing how localized or widespread a given
-  occurrence is. The same disaster type can vary widely (a typical
-  tornado is localized, but a long-track tornado covers much more
-  ground; a hurricane is usually wide-reaching but can also just brush a
-  region) — scope is its own weighted roll, not a fixed property of the
-  disaster type.
+  occurrence is, now resolved spatially: given an occurrence, *which*
+  grid cells actually get struck (and how severely) is its own roll
+  driven by each cell's *local* element composition, not a uniform
+  roll across the map. The same disaster type can still vary widely in
+  scope (a typical tornado is localized, but a long-track tornado covers
+  much more ground) — see the spatial model below for how that's
+  resolved per-cell.
 - **Multiple disasters can occur in the same cycle.**
 - Disasters affect each other's weights within the same cycle — e.g. a
   hurricane occurring should sharply reduce that cycle's drought weight.
@@ -556,6 +564,39 @@ Epidemic (with plant/crop, animal/livestock, and human variants sharing
 the same mechanical scaffolding but hitting different stats — crop
 epidemics hit farming yield, livestock epidemics hit food
 supply/economy, human epidemics hit population/labor directly).
+
+### Spatial model: map grid and per-cell elements
+
+The map is a **grid of cells**, and the Terrain composition elements
+(see Setup / Configuration) are tracked **per cell**, not just as one
+composition for the whole map. A terrain archetype preset seeds the
+*procedural generation* of per-cell element values across the grid (so
+a "Mountain/highland" map ends up with individual cells whose elements
+vary — some cells rolling heavy Mountains/Rock, others Hills or Valley —
+rather than every cell being identical), and from that point on the
+simulation only ever reads per-cell elements.
+
+- **Occurrence (macro roll)**: whether a disaster type triggers this
+  cycle at all is weighted by the aggregate of element values across
+  the whole map (e.g. summed/averaged Coastline exposure map-wide
+  drives overall hurricane occurrence chance).
+- **Strike location (micro roll)**: given a disaster occurs, which
+  cells it actually hits — and how severely — is resolved from each
+  candidate cell's *own local* element composition, not a uniform
+  roll. This is where the existing impact-scope weighting concept
+  becomes spatial: scope is no longer an abstract number, it's the
+  actual set of cells the disaster's spread pattern reaches.
+- **Origination vs. spread are separate, and can point in different
+  directions.** Worked example: **Avalanche** — origination weight is
+  high at steep, high-elevation cells (Mountains + minimal Forest cover
+  to anchor snowpack), but *impact* weight is low right at the origin
+  and grows moving downhill as the slide gathers mass, following the
+  local elevation gradient outward from the origin cell. Other disaster
+  types likely have their own gradient driver for spread (wind direction
+  for Wildfire/Sandstorm, downhill water flow for Flood, radial
+  distance-falloff from the epicenter cell for Earthquake) — avalanche
+  is the only one worked out in detail so far; the rest are open TBD
+  items, same pattern applied per disaster type.
 
 ### Severity scales
 
@@ -608,25 +649,38 @@ following cycles, via the same acute/elevated-need mechanics as
 
 ### Weight-sourcing methodology
 
-Because the sim's terrain types are stylized archetypes rather than
-literal geographic regions, sourcing "real-world historical data" means
-mapping each terrain archetype to representative real-world reference
-region(s), then pulling historical disaster-frequency data for those
-regions:
+Since disaster math now runs on terrain **elements**, not archetype
+labels (see "Spatial model: map grid and per-cell elements"), the goal
+of this methodology is to derive a per-*element* weight for each
+disaster type, not a per-archetype one. Real-world historical data is
+inherently regional, though, so getting there means comparing multiple
+reference regions with *different element mixes* and statistically
+isolating each individual element's contribution — e.g. Sahara and
+Sonoran are both heavily Sand, but differ in Hills/Rock proportion;
+comparing their sandstorm frequency against that difference helps
+isolate what Sand alone contributes versus what Hills contributes.
 
 - **EM-DAT** (CRED's international disaster database) as the primary
   source — broad country-level historical event counts across most
-  disaster types, good for cross-terrain comparison.
+  disaster types, good for cross-region comparison.
 - **USGS** earthquake/volcano catalogs as a supplement for geophysical
   events where EM-DAT is too coarse.
 - **NOAA Storm Events Database** as a supplement for severe-weather
   granularity (tornado, blizzard) using a well-documented reference
   region.
-- Each terrain archetype maps to one or two real-world reference regions;
-  each region's per-disaster-type event count is normalized to
-  events/decade, then converted to the sim's relative weight scale.
+- Each real-world reference region is itself broken down into its own
+  approximate element composition (e.g. Sonoran ≈ mostly Sand + some
+  Hills/Rock, minimal Forest), giving a set of (element mix →
+  disaster-frequency) data points across regions to regress per-element
+  weights from, rather than assigning one region's raw data directly to
+  one archetype.
+- The terrain archetype list below still matters — as the reference-data
+  source set feeding that regression, and as the setup-time preset labels
+  that seed procedural per-cell element generation — even though the
+  simulation itself no longer keys disaster weights off the archetype
+  name directly.
 
-**Terrain archetype list (finalized):**
+**Terrain archetype list (finalized) — reference regions for the element-weight regression above, and setup-time preset labels:**
 
 | Terrain archetype | Reference region(s) |
 |---|---|
@@ -740,9 +794,29 @@ likelihood).
   Sand/Hills/Rock mix) — element list is locked (see "Terrain
   composition elements"), actual weights deferred to the full
   environment-variables pass.
-- Whether the disaster weight table should eventually derive from
-  terrain element composition directly instead of a flat per-archetype
-  lookup (see "Terrain composition elements").
+- **"Everything related to the map" is a big open area, flagged for its
+  own dedicated design pass rather than being fully resolved piecemeal
+  here.** It's decided that the map is a grid of cells, each carrying its
+  own local terrain element composition, and that disaster occurrence is
+  a two-layer roll (map-wide aggregate for whether a disaster triggers,
+  per-cell local elements for where it strikes) — see "Spatial model: map
+  grid and per-cell elements." Still open within that:
+  - Grid resolution/cell size, and how it scales with society
+    size/population and map area.
+  - The procedural generation algorithm that turns an archetype preset
+    into per-cell element values across the grid.
+  - How the map-wide aggregate is computed from per-cell values (simple
+    average, population-weighted, something else).
+  - Per-disaster-type origination and spread-pattern formulas — only
+    Avalanche (origin at steep/high-elevation cells, impact growing
+    downhill) is worked out in detail; the rest (wind-driven spread for
+    Wildfire/Sandstorm, downhill water flow for Flood, radial falloff for
+    Earthquake, etc.) are named but not designed.
+  - How the map's grid relates to the faction/unit population model
+    (do units/factions occupy specific cells, and if so how that ties
+    into disaster strike resolution) — not addressed at all yet.
+  - How this spatial layer interacts with complexity level (is grid
+    resolution or spread-pattern detail itself complexity-gated).
 - Concrete master list of all stats/traits (technology/culture sub-stats,
   personality traits, capability stats, etc.) — deliberately deferred
   until the sim's core architecture is settled; see Stat System —
