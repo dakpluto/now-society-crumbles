@@ -599,6 +599,25 @@ user jump directly to any faction or unit without drilling through
 parents first. JavaFX `TreeView` is the natural fit alongside the
 already-decided `TableView`/`Chart` classes for this view.
 
+### Setup / configuration screen
+
+**Complexity-first, then an adaptive form**: the user picks complexity
+level as the very first step, and that choice then reveals a tailored
+form showing only the fields/ranges that tier unlocks — society size,
+starting era, environment variables (including terrain archetype
+presets, and at higher complexity the underlying terrain composition
+elements directly), society starting traits, and unique unit count
+range, per the existing Complexity level — unified definition. This
+reinforces complexity as the central knob of the whole setup process,
+rather than one setting among many.
+
+- **Changing complexity after entering values is an accepted rough
+  edge**: since the form itself is generated from the complexity choice,
+  lowering complexity after fields are already filled in can leave
+  values outside the newly-allowed range. Exact behavior (clamp values
+  back into range silently, warn and ask before applying, preserve
+  hidden values in case the user raises complexity back up) is TBD.
+
 ## Disasters & Events
 
 ### Natural disasters
@@ -874,6 +893,10 @@ likelihood).
 
 ## Open Questions / Not Yet Decided
 
+- Behavior when the user lowers complexity level after already entering
+  setup values outside the newly-allowed range (see Visualization / UI →
+  "Setup / configuration screen"): silently clamp, warn first, or
+  preserve hidden values in case complexity goes back up.
 - Per-archetype terrain element composition weights (e.g. Desert's exact
   Sand/Hills/Rock mix) — element list is locked (see "Terrain
   composition elements"), actual weights deferred to the full
