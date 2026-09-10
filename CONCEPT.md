@@ -68,8 +68,12 @@ interest in Kotlin — see the JVM stack below.)
   handful of hand-picked examples.
 - **Save/load format: JSON via kotlinx.serialization** — plain Kotlin
   data classes serialize with an annotation, no reflection-heavy setup.
-  Chosen specifically so simulation configs (and seeds, once/if those
-  become user-facing) are easy for people to read, hand-edit, and share.
+  Chosen specifically so simulation configs are easy for people to read,
+  hand-edit, and share. **The shareable config file is the seed plus
+  every starting value** (society size, era, environment variables,
+  starting traits, complexity level, unit count, etc.) — the full set of
+  inputs needed to reproduce a run exactly, not the seed alone. Exact
+  field-by-field schema and versioning are still TBD.
 - **Build tool**: Gradle with the Kotlin DSL — the idiomatic choice for
   a Kotlin project, with good JavaFX plugin support for packaging.
 - **Repo conventions**: target the latest LTS JDK and latest stable
@@ -86,9 +90,10 @@ interest in Kotlin — see the JVM stack below.)
 - **All randomness routed through a seeded PRNG** (variance rolls,
   disaster generation, regression checks, the chaos constant), rather
   than unseeded randomness — this makes a given simulation run fully
-  reproducible from its seed + starting configuration, and could become
-  a user-facing feature later (sharing a seed so someone else can watch
-  the same society unfold).
+  reproducible from its seed + starting configuration. **The seed is a
+  user-facing, definable value** — the user can set a specific seed
+  before running (or let one be generated), and share it so someone else
+  can watch the exact same society unfold.
 
 ## Setup / Configuration
 
@@ -567,9 +572,10 @@ likelihood).
 - Exact formula for combining population size and relationship/influence
   strength into a faction's weight on society-level stats (and a unit's
   weight on faction-level stats).
-- Whether a reproducible seed becomes a user-facing feature (shareable
-  seeds) or stays an internal implementation detail.
-- Exact JSON schema for a shareable simulation config/seed file.
+- Exact JSON schema for the shareable simulation config/seed file
+  (field-by-field structure, versioning strategy) — decided that it holds
+  the seed *plus* every starting value, not the seed alone; the concrete
+  schema itself is still open.
 - Which specific formula steps across the sim (beyond combat
   terrain/proximity) warrant a complexity-gated effective-value
   subroutine vs. just using the raw baseline value directly.
