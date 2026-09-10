@@ -293,7 +293,38 @@ rules apply across all of them:
 - **Concrete stat taxonomy is intentionally deferred** — not overlooked.
   The architecture above is meant to be locked in first so that whatever
   concrete list of stats/traits gets defined later slots into a stable,
-  already-agreed structure.
+  already-agreed structure. A first draft now exists — see "Master stat
+  list (draft)" below — collecting every stat name already referenced
+  informally elsewhere in this doc.
+
+### Master stat list (draft)
+
+Human-readable groupings only, per the "flat and uniform under the
+hood" principle above — the simulation's algorithms treat every entry
+the same way regardless of group. Not exhaustive; expect additions as
+other systems (culture sub-stats, human-caused events, etc.) get
+designed in more detail.
+
+- **Personality/Trait**: Intelligence, Work Ethic, Religiosity, Risk
+  Tolerance, Ideology (exact representation of Ideology — a single
+  alignment score vs. something multi-dimensional — still TBD)
+- **Capability/Knowledge**: Farming Knowledge, Medical Knowledge,
+  Technology Knowledge, Military Knowledge/Capacity
+- **Current-condition/State**: Hunger, Happiness, Health, Security
+  (perceived threat level)
+- **Aggregate/composite** (each backed by complexity-gated detailed
+  sub-stats, per Complexity-gated stat granularity under Technology &
+  Culture Evolution): Technology, Culture, Education Level
+
+**Relationship/diplomatic data is explicitly *not* on this list.**
+Faction-to-faction relationship strength and diplomatic influence
+(already referenced under Factions and Hierarchical Stat Aggregation)
+are inherently **pairwise** — faction A's standing with faction B
+specifically — which doesn't fit the flat per-entity stat model above.
+These live in a **separate relationship matrix/graph structure**
+instead (one value per faction pair, not one value per faction), with
+Diplomatic Influence treated as a derived property of that structure
+rather than its own flat stat. Exact structure/formula still TBD.
 
 ## Factions
 
@@ -956,10 +987,15 @@ likelihood).
   - How disputed or overlapping faction territory claims over the same
     cell are resolved and rendered.
   - Square-to-hex migration path for the planned "2.0" grid upgrade.
-- Concrete master list of all stats/traits (technology/culture sub-stats,
-  personality traits, capability stats, etc.) — deliberately deferred
-  until the sim's core architecture is settled; see Stat System —
-  General Principles.
+- Technology/Culture sub-stat breakdowns, and any further stats surfaced
+  by not-yet-designed systems (human-caused events, etc.) — a first
+  draft master list now exists; see Stat System → "Master stat list
+  (draft)."
+- Exact structure/formula for the faction-to-faction relationship
+  matrix/graph, and how Diplomatic Influence derives from it (see
+  "Master stat list (draft)").
+- Exact representation of the Ideology stat (single alignment score vs.
+  multi-dimensional).
 - How the sim/user judges whether a given tech/culture regression was
   actually "bad" for the society vs. a reasonable adaptation.
 - Concrete taxonomy of human-caused event types and their own
