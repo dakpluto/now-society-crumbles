@@ -510,6 +510,46 @@ rather than higher levels being pure reporting rollups of lower ones.
   over time.
 - Live-tracked high-level stats while watching: technology level,
   society happiness, hunger, population, etc.
+
+### Main map view
+
+- **Square grid cells for v1.** Pairs naturally with the existing
+  elevation/gradient-driven disaster spread model. **Hex grid is a
+  planned "2.0" upgrade** (uniform adjacency distance in every
+  direction, no diagonal ambiguity) — same deferred-precision pattern as
+  the variance-band and complexity-tier "2.0" candidates elsewhere in
+  this doc, not a v1 commitment.
+- **Occupancy vs. territory are distinct concepts**, both rendered as
+  separate visual layers on the map:
+  - **Occupancy**: which cells actually have units living in them. A
+    cell can hold **multiple unique units simultaneously** — not a
+    classic-4X one-unit-per-cell limit. Rendered as markers/density
+    indicators on occupied cells only.
+  - **Territory**: a faction's claimed/controlled boundary, which is
+    broader than just its occupied cells — it can include unoccupied
+    land the faction controls (farmland, wilderness, resource claims,
+    buffer zones). Rendered as a translucent per-faction color tint or
+    border outline across the whole claimed region, independent of
+    where markers show actual occupancy within it.
+  - This occupancy/territory split also clarifies disaster resolution
+    at the cell level (see Disasters & Events → Spatial model): a
+    disaster striking an occupied cell directly affects every unit
+    anchored there (each still gets its own independent
+    Need→Strategy→Resolution/variance resolution); a disaster striking
+    an unoccupied-but-claimed cell affects the owning faction's
+    resources/territory rather than any specific unit.
+- **Cell rendering derives from terrain element composition**, not a
+  single flat terrain-type color: base color from the dominant Ground
+  composition element (e.g. Sand → tan, Rock → gray), a texture/icon
+  overlay for Vegetation cover (tree symbols for Forest, grass texture
+  for Grass/Scrubland), shading for Topography (hillshading for
+  Hills/Mountains), and a distinct overlay tint for Water features
+  (Coastline, River/Lake, Wetland). Exact color/icon mapping is TBD —
+  this is an art-direction pass, not an architecture decision.
+- **Disaster occurrences are shown as an overlay/highlight on the
+  specific cells struck that cycle** (icon or highlight color),
+  consistent with the already-decided redrawn-per-cycle (not
+  continuously animated) JavaFX `Canvas` rendering approach.
 - **Detail view** (e.g. toggled with Tab): a spreadsheet-style breakdown
   of simulation history — fine-grained data and graphs, likely at a
   per-faction, per-year granularity, given the faction/unit-based data
@@ -812,11 +852,22 @@ likelihood).
     downhill) is worked out in detail; the rest (wind-driven spread for
     Wildfire/Sandstorm, downhill water flow for Flood, radial falloff for
     Earthquake, etc.) are named but not designed.
-  - How the map's grid relates to the faction/unit population model
-    (do units/factions occupy specific cells, and if so how that ties
-    into disaster strike resolution) — not addressed at all yet.
+  - ~~How the map's grid relates to the faction/unit population
+    model~~ — **resolved**: units anchor to specific cells (multiple
+    units may share a cell), faction territory is a broader, distinct
+    claimed-region concept that can include unoccupied cells; see
+    Visualization / UI → "Main map view."
   - How this spatial layer interacts with complexity level (is grid
     resolution or spread-pattern detail itself complexity-gated).
+  - Exact cell color/icon mapping per terrain element (art-direction
+    pass, not architecture).
+  - Map zoom/pan mechanics and camera controls.
+  - Soft cap or visual-clutter handling when many units occupy the same
+    cell (echoes the existing soft performance-warning pattern for high
+    unit counts overall).
+  - How disputed or overlapping faction territory claims over the same
+    cell are resolved and rendered.
+  - Square-to-hex migration path for the planned "2.0" grid upgrade.
 - Concrete master list of all stats/traits (technology/culture sub-stats,
   personality traits, capability stats, etc.) — deliberately deferred
   until the sim's core architecture is settled; see Stat System —
