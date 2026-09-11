@@ -53,6 +53,15 @@ class SimRandomTest : StringSpec({
         }
     }
 
+    "nextLong() is deterministic for a given seed" {
+        checkAll(Arb.long()) { seed ->
+            val a = SimRandom(seed)
+            val b = SimRandom(seed)
+
+            List(50) { a.nextLong() } shouldBe List(50) { b.nextLong() }
+        }
+    }
+
     "chance(p) comes true roughly p of the time over many rolls" {
         checkAll(iterations = 20, genA = Arb.double(0.05, 0.95)) { probability ->
             val random = SimRandom(5L)

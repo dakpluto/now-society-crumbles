@@ -30,6 +30,9 @@ class SimRandom(val seed: Long) {
     /** Uniform int in [from, until). */
     fun nextInt(from: Int, until: Int): Int = random.nextInt(from, until)
 
+    /** Uniform long across the full Long range - used to derive sub-seeds for other seeded generators (e.g. per-category noise fields). */
+    fun nextLong(): Long = random.nextLong()
+
     /**
      * True with the given [probability] (0.0-1.0) - the common primitive
      * behind every occurrence/regression/event roll described in CONCEPT.md
