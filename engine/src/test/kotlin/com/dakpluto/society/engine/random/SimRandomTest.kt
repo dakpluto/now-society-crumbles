@@ -63,8 +63,12 @@ class SimRandomTest : StringSpec({
     }
 
     "chance(p) comes true roughly p of the time over many rolls" {
-        checkAll(iterations = 20, genA = Arb.double(0.05, 0.95)) { probability ->
-            val random = SimRandom(5L)
+        // Seed varies per iteration too - reusing one fixed seed meant every
+        // iteration re-checked the exact same 5000-number sequence against a
+        // different threshold, so a single unlucky sample could fail the
+        // tolerance for some probability no matter how generous the bound.
+        checkAll(iterations = 20, Arb.long(), Arb.double(0.05, 0.95)) { seed, probability ->
+            val random = SimRandom(seed)
             val trials = 5000
             val hits = (1..trials).count { random.chance(probability) }
             val observedRate = hits.toDouble() / trials
