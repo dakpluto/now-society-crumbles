@@ -6,6 +6,7 @@ import io.kotest.matchers.doubles.shouldBeLessThan
 import io.kotest.matchers.shouldBe
 import io.kotest.property.Arb
 import io.kotest.property.arbitrary.double
+import io.kotest.property.arbitrary.filter
 import io.kotest.property.arbitrary.long
 import io.kotest.property.checkAll
 
@@ -67,7 +68,14 @@ class SimRandomTest : StringSpec({
         // iteration re-checked the exact same 5000-number sequence against a
         // different threshold, so a single unlucky sample could fail the
         // tolerance for some probability no matter how generous the bound.
-        checkAll(iterations = 20, Arb.long(), Arb.double(0.05, 0.95)) { seed, probability ->
+        //
+        // The filter matters: Arb.double(min, max) still injects its built-in
+        // edge cases (NaN, +-Infinity, etc.) regardless of the requested
+        // range, so without it `probability` occasionally comes back NaN and
+        // `NaN < 0.05` is deterministically false - not real flakiness, an
+        // edge-case value that doesn't belong in this property at all.
+        val probabilities = Arb.double(0.05, 0.95).filter { it in 0.05..0.95 }
+        checkAll(iterations = 20, Arb.long(), probabilities) { seed, probability ->
             val random = SimRandom(seed)
             val trials = 5000
             val hits = (1..trials).count { random.chance(probability) }
