@@ -29,7 +29,7 @@ ranges, etc.).
 
 - [x] Sand — `sand.png`
 - [x] Clay — `clay.png`
-- [ ] Loam — `loam.png`
+- [x] Loam — `loam.png`
 - [x] Rock — `rock.png`
 - [ ] Permafrost — `permafrost.png`
 - [ ] Peat/Bog — `peat_bog.png`
