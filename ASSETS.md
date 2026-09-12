@@ -49,7 +49,7 @@ ground through with no overlay.)*
 - [ ] Hills — received, held at `assets-pending/topography/hills.png`
       (not wired in yet, see note below)
 - [ ] Mountains — received, held at `assets-pending/topography/mountains.png`
-- [ ] Valley/Canyon
+- [ ] Valley/Canyon — received, held at `assets-pending/topography/valley_canyon.png`
 - [ ] Plateau
 
 *(CONCEPT.md suggests hillshading here. This is rendered procedurally today
