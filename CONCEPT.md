@@ -985,6 +985,23 @@ desirable but left as a deferred refinement rather than specified now —
 exact correlation mechanics are numeric-tuning-level detail, same
 pattern as the rest of this doc.
 
+**Zone shape is a real tuning target, not just zone size.** Confirmed by
+eyeballing the raw two-element Perlin blend at scale (via the
+`renderPreview` dev tool — see ASSETS.md): its boundary contours default
+to long, thin, winding "spaghetti" shapes threading across the map, not
+the chunky, roughly-blob-shaped regions a real terrain archetype should
+read as (a contiguous desert region, a forest patch). **Only features that
+are inherently linear in reality — rivers, canyons, coastlines — should
+end up looking like that**; most element zones (ground composition types,
+vegetation patches) should default to blobbier, more compact shapes. This
+needs to be corrected as part of the same deferred numeric-tuning pass as
+the archetype weights and cross-category correlation above (e.g. blending
+in a second, lower-frequency noise field to bias toward broader/rounder
+regions, or domain-warping the sample coordinates) — not solved now, but
+recorded here so it isn't lost or mistaken for "working as intended" once
+real map layouts (not just the isolated single-category preview tool) are
+being judged.
+
 - **Occurrence (macro roll)**: whether a disaster type triggers this
   cycle at all is weighted by the aggregate of element values across
   the whole map (e.g. summed/averaged Coastline exposure map-wide
