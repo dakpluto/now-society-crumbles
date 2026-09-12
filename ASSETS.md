@@ -50,7 +50,7 @@ ground through with no overlay.)*
       (not wired in yet, see note below)
 - [ ] Mountains — received, held at `assets-pending/topography/mountains.png`
 - [ ] Valley/Canyon — received, held at `assets-pending/topography/valley_canyon.png`
-- [ ] Plateau
+- [ ] Plateau — received, held at `assets-pending/topography/plateau.png`
 
 *(CONCEPT.md suggests hillshading here. This is rendered procedurally today
 as a brightness multiplier in `TerrainTextures.TOPOGRAPHY_BRIGHTNESS` and
