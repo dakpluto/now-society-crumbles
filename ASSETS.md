@@ -36,10 +36,10 @@ ranges, etc.).
 
 ### Vegetation cover (transparent overlay on the ground tile)
 
-- [ ] Grass/Scrubland — `grass_scrubland.png`
+- [x] Grass/Scrubland — `grass_scrubland.png`
 - [x] Forest/Trees — `forest_trees.png`
-- [ ] Moss/Tundra vegetation — `moss_tundra.png`
-- [ ] Marsh/Mangrove — `marsh_mangrove.png`
+- [x] Moss/Tundra vegetation — `moss_tundra.png`
+- [x] Marsh/Mangrove — `marsh_mangrove.png`
 
 *(Barren/None needs no art — it renders fully transparent, showing bare
 ground through with no overlay.)*
