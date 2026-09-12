@@ -257,7 +257,10 @@ the full environment-variables pass.
 - **Water features** (geographic adjacency — distinct from the
   *"water resources"* environment variable, which is about abundance/
   reliability, not physical adjacency): Coastline, River/Lake-adjacent,
-  Wetland-saturated, Landlocked
+  Wetland-saturated, Landlocked. **Coastline and River/Lake-adjacent are
+  computed boundary lines, not blended-area elements like the other two**
+  — see "Spatial model: map grid and per-cell elements" ->
+  "Coastline and River/Lake-adjacent are boundary-line features."
 
 **Decided**: the disaster weight table is computed from underlying
 element composition directly, not a flat per-archetype lookup — the
@@ -1002,6 +1005,61 @@ recorded here so it isn't lost or mistaken for "working as intended" once
 real map layouts (not just the isolated single-category preview tool) are
 being judged.
 
+**Coastline and River/Lake-adjacent are boundary-line features, not
+blended-area elements like the rest of Water features.** The generic
+"one noise field per category, blend the two nearest elements" model
+(above) works for area-like elements — Wetland-saturated is a patch, like
+a Forest/Trees zone — but breaks down for these two specifically:
+
+- **Orientation is arbitrary and changes over short distances.** A real
+  coastline or river doesn't have a "typical" angle the way a flat tile
+  texture implicitly does, and it can bend sharply within the space of a
+  single cell. A repeating texture tile (the approach every other element
+  uses) can't represent that without visible seams or an obviously
+  repeating pattern.
+- **What's on each side varies enormously and independently of the line
+  itself.** The land side could be any Ground composition/Vegetation
+  combination; the water side isn't visually uniform either (a Caribbean
+  coastline and the Mississippi River don't look alike) — a single flat
+  "coastline" or "river" texture asset can't capture that variation, and
+  trying to would mean an unbounded number of texture variants for every
+  plausible land/water pairing.
+
+**Decided instead**: Coastline and River/Lake-adjacent are **computed
+boundary lines**, not weighted noise elements. Each is drawn as a line
+between the two known points where it crosses its cell's border (the
+matching points on whichever neighboring cells it connects to, so the
+line is continuous across cell boundaries rather than independently
+regenerated per cell) — plausibly with some randomized waviness so it
+doesn't read as a perfectly straight edge. Rather than needing dedicated
+"coastline"/"river" art at all, **each side of the line just renders using
+whatever elements actually exist there already** — the land side reads as
+its own local Ground composition/Vegetation blend, the water side reads
+as whatever the map's water rendering is (a plain tint is enough for v1;
+distinct ocean-vs-river-vs-lake water *looks* are a real idea but not
+needed to unblock this — see Open Questions). This also resolves a latent
+mismatch with how the rest of this doc already treats Coastline/River:
+Tsunami's spread pattern already talks about "travel along Coastline
+cells" and Epidemic's is "Contact/connectivity-driven" — both already
+implicitly treat these as adjacency/path concepts, not composition
+percentages, so this decision brings the terrain-element model in line
+with how disaster mechanics were already using it.
+
+**Wetland-saturated and Landlocked are unaffected** — Wetland is an area
+element like any other (see ASSETS.md), and Landlocked is simply the
+"no water feature here" baseline, same as Barren/None for Vegetation
+cover.
+
+**Not yet decided (design only for now, not implemented)**: the exact
+line-generation algorithm (how entry/exit points get chosen and kept
+consistent with neighboring cells so a coastline/river reads as one
+continuous path across the whole map, how much waviness to add, how this
+interacts with the per-cell rendering pipeline that otherwise samples
+[TerrainField] continuously) is deferred, along with actually building it
+— this section locks in the *approach*, not the algorithm, same pattern
+as the rest of this doc's "spread pattern taxonomy, not exact spread
+math" style decisions.
+
 - **Occurrence (macro roll)**: whether a disaster type triggers this
   cycle at all is weighted by the aggregate of element values across
   the whole map (e.g. summed/averaged Coastline exposure map-wide
@@ -1349,6 +1407,17 @@ explicit mechanism since it operates through a different pathway
   - How disputed or overlapping faction territory claims over the same
     cell are resolved and rendered.
   - Square-to-hex migration path for the planned "2.0" grid upgrade.
+  - ~~How Coastline/River-Lake-adjacent should be represented visually,
+    given they can't be a flat repeating texture like every other
+    element~~ — **resolved at the approach level**: computed boundary
+    lines between known cell-border crossing points, each side rendering
+    as whatever elements are actually there rather than dedicated art;
+    see "Spatial model: map grid and per-cell elements" -> "Coastline and
+    River/Lake-adjacent are boundary-line features." Still open within
+    that: the exact line-generation/cross-cell-consistency algorithm, and
+    whether water itself eventually needs more than one visual "look"
+    (ocean vs. river vs. lake, not just a flat tint) — raised but not
+    needed to unblock the boundary-line decision above.
 - Technology/Culture sub-stat breakdowns, and any further stats surfaced
   by other not-yet-designed systems — a first draft master list now
   exists; see Stat System → "Master stat list (draft)."

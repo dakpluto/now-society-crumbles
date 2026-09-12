@@ -64,11 +64,18 @@ dropping it straight into the live folder would just be silently unused.)*
 
 ### Water features (transparent overlay)
 
-- [ ] Coastline — `coastline.png`
-- [ ] River/Lake-adjacent — `river_lake_adjacent.png`
 - [ ] Wetland-saturated — `wetland_saturated.png`
 
-*(Landlocked needs no overlay — it renders fully transparent.)*
+*(Landlocked needs no overlay — it renders fully transparent. Coastline
+and River/Lake-adjacent no longer need dedicated texture art at all — see
+CONCEPT.md -> "Spatial model: map grid and per-cell elements" ->
+"Coastline and River/Lake-adjacent are boundary-line features." They're
+computed boundary lines between known cell-border points instead of a
+blended element like everything else on this list; each side renders
+using whatever's already there rather than needing its own art. Not
+implemented yet — this is a design decision, not a rendering change, so
+`TerrainTextures`/`TerrainRenderer` still treat them as ordinary blended
+elements for now.)*
 
 ## Disaster overlay icons
 
