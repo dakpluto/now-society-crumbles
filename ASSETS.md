@@ -28,7 +28,7 @@ ranges, etc.).
 ### Ground composition (base tile)
 
 - [x] Sand — `sand.png`
-- [ ] Clay — `clay.png`
+- [x] Clay — `clay.png`
 - [ ] Loam — `loam.png`
 - [x] Rock — `rock.png`
 - [ ] Permafrost — `permafrost.png`
