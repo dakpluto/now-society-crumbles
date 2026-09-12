@@ -18,9 +18,19 @@ import javax.imageio.ImageIO
  * `run` task so this never displaces [com.dakpluto.society.ui.App] as the
  * project's actual entry point.
  *
+ * Vegetation cover and Water features are transparent overlays (Barren and
+ * Landlocked render fully transparent - see [TerrainTextures]), so a
+ * category rendered alone would otherwise come out as raw alpha, which
+ * different image viewers flatten against different backgrounds (some
+ * black, some white) - not what the art actually looks like once composited.
+ * This flattens every output against a fixed neutral grey backdrop so it
+ * reads consistently everywhere.
+ *
  * All parameters are optional `--name=value` args (e.g. `--category=water_features
  * --seed=7 --width=200`); see [PreviewOptions] for the full list and defaults.
  */
+private const val BACKDROP_ARGB = 0xFFAAAAAA.toInt()
+
 fun main(args: Array<String>) {
     val options = PreviewOptions.parse(args)
     val field = TerrainField(seed = options.seed, frequency = options.frequency)
@@ -39,13 +49,31 @@ fun main(args: Array<String>) {
             val texelX = wrapTexel(worldX * texelsPerWorldUnit, tileSize)
             val texelIndex = texelY * tileSize + texelX
 
-            image.setRGB(px, py, blendCategoryArgb(field, options.category, worldX, worldY, texelIndex))
+            val overlay = blendCategoryArgb(field, options.category, worldX, worldY, texelIndex)
+            image.setRGB(px, py, alphaOverBackdrop(overlay))
         }
     }
 
     options.outputFile.parentFile?.mkdirs()
     ImageIO.write(image, "png", options.outputFile)
     println("Wrote ${options.outputFile.absolutePath}")
+}
+
+private fun alphaOverBackdrop(overlay: Int): Int {
+    val overlayAlpha = ((overlay ushr 24) and 0xFF) / 255.0
+    if (overlayAlpha >= 1.0) return overlay
+
+    val backdropR = (BACKDROP_ARGB ushr 16) and 0xFF
+    val backdropG = (BACKDROP_ARGB ushr 8) and 0xFF
+    val backdropB = BACKDROP_ARGB and 0xFF
+    val overlayR = (overlay ushr 16) and 0xFF
+    val overlayG = (overlay ushr 8) and 0xFF
+    val overlayB = overlay and 0xFF
+
+    val r = (overlayR * overlayAlpha + backdropR * (1 - overlayAlpha)).toInt()
+    val g = (overlayG * overlayAlpha + backdropG * (1 - overlayAlpha)).toInt()
+    val b = (overlayB * overlayAlpha + backdropB * (1 - overlayAlpha)).toInt()
+    return (0xFF shl 24) or (r shl 16) or (g shl 8) or b
 }
 
 /** Weighted sum of every nonzero-weight element's texel in [category] - at most two, per [TerrainField]. */
