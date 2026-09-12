@@ -2,39 +2,47 @@
 
 Tracking doc for externally-sourced art. See `CONCEPT.md` -> "Visualization
 / UI" for the design context behind each item. Nothing here is currently
-blocking: the map renders today with flat, code-generated placeholder
-colors (`ui/.../map/TerrainColors.kt`), so the sim runs and looks reasonable
-without any of this. This list is for replacing that placeholder look, and
-for the disaster/marker/app-identity art that doesn't exist yet at all.
+blocking: `TerrainRenderer` (`ui/.../map/TerrainRenderer.kt`) continuously
+blends real per-element textures where they exist and falls back to a flat
+placeholder color (same values the map used before texture blending
+existed - see `TerrainTextures.kt`) where they don't, so the sim runs and
+looks reasonable with zero art supplied. Each item below is a drop-in
+replacement, one element at a time — no code changes needed, just add the
+file at the exact path/name listed.
 
 **Format notes (applies to every tile/overlay below):** the map is a
 **top-down 2D square grid** (not isometric) — see CONCEPT.md's "Square grid
-cells for v1." Supply transparent PNGs, square, at a decent base resolution
-(**128x128 suggested**) — exact on-screen cell size isn't locked yet
-(CONCEPT.md flags grid resolution as "a fixed engine constant" still TBD),
-so oversized source art scales down cleanly later. Overlay tiles should tile
-cleanly at the edges against their neighbors where the element is meant to
-form contiguous regions (forests, mountain ranges, etc.).
+cells for v1." Supply transparent PNGs, square, filename **exactly the
+element's enum name, lowercased** (e.g. `TerrainElement.FOREST_TREES` ->
+`forest_trees.png`), dropped into `ui/src/main/resources/textures/`.
+Any resolution works — `TerrainTextures` scales every tile to a canonical
+256x256 internally — but supply at least 256x256 source art to avoid
+upscaling blur; the two placeholder textures already in the repo
+(`sand.png`, `forest_trees.png`) are 256x256 and are a good reference point.
+Overlay tiles should tile cleanly at the edges against their neighbors
+where the element is meant to form contiguous regions (forests, mountain
+ranges, etc.).
 
 ## Terrain tile art
 
 ### Ground composition (base tile)
 
-- [ ] Sand
-- [ ] Clay
-- [ ] Loam
-- [ ] Rock
-- [ ] Permafrost
-- [ ] Peat/Bog
+- [x] Sand — `sand.png` (placeholder in repo)
+- [ ] Clay — `clay.png`
+- [ ] Loam — `loam.png`
+- [ ] Rock — `rock.png`
+- [ ] Permafrost — `permafrost.png`
+- [ ] Peat/Bog — `peat_bog.png`
 
 ### Vegetation cover (transparent overlay on the ground tile)
 
-- [ ] Grass/Scrubland
-- [ ] Forest/Trees
-- [ ] Moss/Tundra vegetation
-- [ ] Marsh/Mangrove
+- [ ] Grass/Scrubland — `grass_scrubland.png`
+- [x] Forest/Trees — `forest_trees.png` (placeholder in repo)
+- [ ] Moss/Tundra vegetation — `moss_tundra.png`
+- [ ] Marsh/Mangrove — `marsh_mangrove.png`
 
-*(Barren/None needs no art — it shows bare ground with no overlay.)*
+*(Barren/None needs no art — it renders fully transparent, showing bare
+ground through with no overlay.)*
 
 ### Topography (overlay - optional)
 
@@ -43,17 +51,20 @@ form contiguous regions (forests, mountain ranges, etc.).
 - [ ] Valley/Canyon
 - [ ] Plateau
 
-*(CONCEPT.md suggests hillshading here. Currently done procedurally in code
-as a brightness shift — this art is only needed if you'd rather have real
-relief art instead of the procedural shading.)*
+*(CONCEPT.md suggests hillshading here. This is rendered procedurally today
+as a brightness multiplier in `TerrainTextures.TOPOGRAPHY_BRIGHTNESS` and
+`TerrainRenderer`, with no texture support at all yet — this art is only
+needed if/when real relief art replaces that procedural shading, which
+would require renderer changes too, not just a dropped-in file like every
+other item on this list.)*
 
 ### Water features (transparent overlay)
 
-- [ ] Coastline
-- [ ] River/Lake-adjacent
-- [ ] Wetland-saturated
+- [ ] Coastline — `coastline.png`
+- [ ] River/Lake-adjacent — `river_lake_adjacent.png`
+- [ ] Wetland-saturated — `wetland_saturated.png`
 
-*(Landlocked needs no overlay.)*
+*(Landlocked needs no overlay — it renders fully transparent.)*
 
 ## Disaster overlay icons
 

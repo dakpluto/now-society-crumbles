@@ -1,7 +1,7 @@
 package com.dakpluto.society.ui
 
 import com.dakpluto.society.engine.terrain.TerrainGenerator
-import com.dakpluto.society.ui.map.SubCellBlendPrototype
+import com.dakpluto.society.ui.map.TerrainRenderer
 import javafx.application.Application
 import javafx.scene.Scene
 import javafx.scene.image.ImageView
@@ -19,7 +19,7 @@ private const val DEMO_CELLS_PER_TEXTURE_TILE = 2.0
 class App : Application() {
     override fun start(stage: Stage) {
         val field = TerrainGenerator.generateField(seed = DEMO_SEED)
-        val map = SubCellBlendPrototype.render(field, DEMO_WIDTH_CELLS, DEMO_HEIGHT_CELLS, DEMO_PIXELS_PER_CELL, DEMO_CELLS_PER_TEXTURE_TILE)
+        val map = TerrainRenderer.render(field, DEMO_WIDTH_CELLS, DEMO_HEIGHT_CELLS, DEMO_PIXELS_PER_CELL, DEMO_CELLS_PER_TEXTURE_TILE)
 
         val root = StackPane(ImageView(map))
         stage.title = "Now Society Crumbles"
