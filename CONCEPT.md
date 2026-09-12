@@ -304,8 +304,8 @@ Example: a unit's farming knowledge base value is 52.
 
 **Implementation notes:**
 - v1 uses **discrete bands** (person/family/community-style tiers), not a
-  continuous formula. A more exacting continuous scale is a candidate for
-  a future "2.0" version.
+  continuous formula — see `FUTURE.md` for the deferred continuous-formula
+  idea.
 - The randomization is **recalculated every time the value is used** in a
   calculation — it is *not* rolled once and cached, and it does *not*
   feed back into the base value. The same unit's 52 farming knowledge
@@ -798,11 +798,9 @@ than mixing stats and controls together:
   applies here too — a very large map size produces a large cell count,
   which should warn rather than hard-cap.
 - **Square grid cells for v1.** Pairs naturally with the existing
-  elevation/gradient-driven disaster spread model. **Hex grid is a
-  planned "2.0" upgrade** (uniform adjacency distance in every
-  direction, no diagonal ambiguity) — same deferred-precision pattern as
-  the variance-band and complexity-tier "2.0" candidates elsewhere in
-  this doc, not a v1 commitment.
+  elevation/gradient-driven disaster spread model. Hex grid (uniform
+  adjacency distance in every direction, no diagonal ambiguity) is a
+  deferred idea, not a v1 commitment — see `FUTURE.md`.
 - **Occupancy vs. territory are distinct concepts**, both rendered as
   separate visual layers on the map:
   - **Occupancy**: which cells actually have units living in them. A
