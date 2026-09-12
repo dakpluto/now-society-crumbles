@@ -67,15 +67,27 @@ dropping it straight into the live folder would just be silently unused.)*
 - [ ] Wetland-saturated — `wetland_saturated.png`
 
 *(Landlocked needs no overlay — it renders fully transparent. Coastline
-and River/Lake-adjacent no longer need dedicated texture art at all — see
-CONCEPT.md -> "Spatial model: map grid and per-cell elements" ->
+and River/Lake-adjacent no longer need dedicated *boundary-line* texture
+art — see CONCEPT.md -> "Spatial model: map grid and per-cell elements" ->
 "Coastline and River/Lake-adjacent are boundary-line features." They're
 computed boundary lines between known cell-border points instead of a
-blended element like everything else on this list; each side renders
-using whatever's already there rather than needing its own art. Not
-implemented yet — this is a design decision, not a rendering change, so
-`TerrainTextures`/`TerrainRenderer` still treat them as ordinary blended
-elements for now.)*
+blended element like everything else on this list; the land side of the
+line renders using whatever's already there. The water side needs its own
+art though — see "Water looks" below.)*
+
+### Water looks (boundary-line rendering — not built yet)
+
+CONCEPT.md -> "Water look by boundary type": water isn't one flat tint —
+Coastline gets its own open-water/ocean look, River/Lake-adjacent gets its
+own river/lake look. **Not wired to anything yet** (the boundary-line
+renderer itself doesn't exist — see the Water features note above), so
+this art is held at `assets-pending/water/`, same pattern as Topography.
+
+- [ ] Ocean/open water (from Coastline) — held at
+      `assets-pending/water/ocean.png` once received
+- [ ] River/Lake water (from River/Lake-adjacent) — held at
+      `assets-pending/water/river_lake.png` once received; may split into
+      separate River and Lake looks later (see CONCEPT.md, still open)
 
 ## Disaster overlay icons
 

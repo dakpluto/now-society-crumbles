@@ -1035,15 +1035,26 @@ doesn't read as a perfectly straight edge. Rather than needing dedicated
 "coastline"/"river" art at all, **each side of the line just renders using
 whatever elements actually exist there already** — the land side reads as
 its own local Ground composition/Vegetation blend, the water side reads
-as whatever the map's water rendering is (a plain tint is enough for v1;
-distinct ocean-vs-river-vs-lake water *looks* are a real idea but not
-needed to unblock this — see Open Questions). This also resolves a latent
-mismatch with how the rest of this doc already treats Coastline/River:
-Tsunami's spread pattern already talks about "travel along Coastline
-cells" and Epidemic's is "Contact/connectivity-driven" — both already
-implicitly treat these as adjacency/path concepts, not composition
-percentages, so this decision brings the terrain-element model in line
-with how disaster mechanics were already using it.
+as a **water look matching whichever boundary type put it there** (see
+"Water look by boundary type" below), not one flat tint for all water.
+This also resolves a latent mismatch with how the rest of this doc already
+treats Coastline/River: Tsunami's spread pattern already talks about
+"travel along Coastline cells" and Epidemic's is
+"Contact/connectivity-driven" — both already implicitly treat these as
+adjacency/path concepts, not composition percentages, so this decision
+brings the terrain-element model in line with how disaster mechanics were
+already using it.
+
+**Water look by boundary type**: **decided — water gets more than one
+visual look, not a single flat tint.** At minimum, Coastline gets an
+open-water/ocean look and River/Lake-adjacent gets a river/lake look,
+each its own art (color/texture) rather than one generic "water" asset
+covering every boundary type — directly addressing the Caribbean-vs-
+Mississippi observation above. **Still open**: whether River/Lake-adjacent
+itself should eventually split into two separate elements (a river and a
+lake don't necessarily look alike either), or share one "river/lake" look
+for now — not a blocker, since it only affects how many distinct water
+looks exist, not the boundary-line mechanism itself.
 
 **Wetland-saturated and Landlocked are unaffected** — Wetland is an area
 element like any other (see ASSETS.md), and Landlocked is simply the
@@ -1413,11 +1424,13 @@ explicit mechanism since it operates through a different pathway
     lines between known cell-border crossing points, each side rendering
     as whatever elements are actually there rather than dedicated art;
     see "Spatial model: map grid and per-cell elements" -> "Coastline and
-    River/Lake-adjacent are boundary-line features." Still open within
-    that: the exact line-generation/cross-cell-consistency algorithm, and
-    whether water itself eventually needs more than one visual "look"
-    (ocean vs. river vs. lake, not just a flat tint) — raised but not
-    needed to unblock the boundary-line decision above.
+    River/Lake-adjacent are boundary-line features." ~~Whether water
+    itself needs more than one visual "look"~~ — **resolved**: yes, at
+    least an ocean look (Coastline) and a river/lake look
+    (River/Lake-adjacent) — see "Water look by boundary type." Still open
+    within that: the exact line-generation/cross-cell-consistency
+    algorithm, and whether River/Lake-adjacent should split into separate
+    River and Lake elements/looks.
 - Technology/Culture sub-stat breakdowns, and any further stats surfaced
   by other not-yet-designed systems — a first draft master list now
   exists; see Stat System → "Master stat list (draft)."
