@@ -46,7 +46,8 @@ ground through with no overlay.)*
 
 ### Topography (overlay - optional)
 
-- [ ] Hills
+- [ ] Hills — received, held at `assets-pending/topography/hills.png`
+      (not wired in yet, see note below)
 - [ ] Mountains
 - [ ] Valley/Canyon
 - [ ] Plateau
@@ -56,7 +57,10 @@ as a brightness multiplier in `TerrainTextures.TOPOGRAPHY_BRIGHTNESS` and
 `TerrainRenderer`, with no texture support at all yet — this art is only
 needed if/when real relief art replaces that procedural shading, which
 would require renderer changes too, not just a dropped-in file like every
-other item on this list.)*
+other item on this list. Any Topography art sent in the meantime is held
+at `assets-pending/topography/` rather than `ui/src/main/resources/textures/`,
+since `TerrainTextures` doesn't load anything for this category yet and
+dropping it straight into the live folder would just be silently unused.)*
 
 ### Water features (transparent overlay)
 
