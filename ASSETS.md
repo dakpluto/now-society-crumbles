@@ -32,7 +32,7 @@ ranges, etc.).
 - [x] Loam — `loam.png`
 - [x] Rock — `rock.png`
 - [x] Permafrost — `permafrost.png`
-- [ ] Peat/Bog — `peat_bog.png`
+- [x] Peat/Bog — `peat_bog.png`
 
 ### Vegetation cover (transparent overlay on the ground tile)
 
