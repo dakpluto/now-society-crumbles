@@ -17,8 +17,8 @@ element's enum name, lowercased** (e.g. `TerrainElement.FOREST_TREES` ->
 `forest_trees.png`), dropped into `ui/src/main/resources/textures/`.
 Any resolution works — `TerrainTextures` scales every tile to a canonical
 256x256 internally — but supply at least 256x256 source art to avoid
-upscaling blur; the two placeholder textures already in the repo
-(`sand.png`, `forest_trees.png`) are 256x256 and are a good reference point.
+upscaling blur; the textures already in the repo (`sand.png`,
+`forest_trees.png`, `rock.png`) are 256x256 and are a good reference point.
 Overlay tiles should tile cleanly at the edges against their neighbors
 where the element is meant to form contiguous regions (forests, mountain
 ranges, etc.).
@@ -27,17 +27,17 @@ ranges, etc.).
 
 ### Ground composition (base tile)
 
-- [x] Sand — `sand.png` (placeholder in repo)
+- [x] Sand — `sand.png`
 - [ ] Clay — `clay.png`
 - [ ] Loam — `loam.png`
-- [ ] Rock — `rock.png`
+- [x] Rock — `rock.png`
 - [ ] Permafrost — `permafrost.png`
 - [ ] Peat/Bog — `peat_bog.png`
 
 ### Vegetation cover (transparent overlay on the ground tile)
 
 - [ ] Grass/Scrubland — `grass_scrubland.png`
-- [x] Forest/Trees — `forest_trees.png` (placeholder in repo)
+- [x] Forest/Trees — `forest_trees.png`
 - [ ] Moss/Tundra vegetation — `moss_tundra.png`
 - [ ] Marsh/Mangrove — `marsh_mangrove.png`
 
