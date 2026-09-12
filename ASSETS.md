@@ -48,7 +48,7 @@ ground through with no overlay.)*
 
 - [ ] Hills — received, held at `assets-pending/topography/hills.png`
       (not wired in yet, see note below)
-- [ ] Mountains
+- [ ] Mountains — received, held at `assets-pending/topography/mountains.png`
 - [ ] Valley/Canyon
 - [ ] Plateau
 
