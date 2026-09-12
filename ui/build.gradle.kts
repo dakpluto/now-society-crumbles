@@ -33,3 +33,13 @@ application {
 tasks.test {
     useJUnitPlatform()
 }
+
+// Dev-only terrain preview tool (see PreviewMain.kt) - deliberately its own
+// task, not a change to `application.mainClass`, so `:ui:run` always launches
+// the real app. Example: ./gradlew :ui:renderPreview --args="--category=water_features --seed=7"
+tasks.register<JavaExec>("renderPreview") {
+    group = "application"
+    description = "Renders a single terrain category to a PNG for eyeballing new art at scale (see ASSETS.md)."
+    mainClass.set("com.dakpluto.society.ui.map.PreviewMainKt")
+    classpath = sourceSets["main"].runtimeClasspath
+}
